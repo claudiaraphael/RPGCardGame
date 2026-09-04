@@ -11,16 +11,14 @@ function App() {
     <>
       <Header/>
       <MonsterSearch/>
-      <Button/><Button/><Button/>
+      <Button/>
       <Food/>
       <Card/>
       <Card/>
       <Card/>
       <Card/>
       <Footer/>
-    
     </>
-        
   );
 }
 

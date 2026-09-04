@@ -1,0 +1,20 @@
+{
+  "ability-scores": "/api/2014/ability-scores",
+  "classes": "/api/2014/classes",
+  "conditions": "/api/2014/conditions",
+  "damage-types": "/api/2014/damage-types",
+  "equipment-categories": "/api/2014/equipment-categories",
+  "equipment": "/api/2014/equipment",
+  "features": "/api/2014/features",
+  "languages": "/api/2014/languages",
+  "magic-schools": "/api/2014/magic-schools",
+  "monsters": "/api/2014/monsters",
+  "proficiencies": "/api/2014/proficiencies",
+  "races": "/api/2014/races",
+  "skills": "/api/2014/skills",
+  "spells": "/api/2014/spells",
+  "subclasses": "/api/2014/subclasses",
+  "subraces": "/api/2014/subraces",
+  "traits": "/api/2014/traits",
+  "weapon-properties": "/api/2014/weapon-properties"
+}
