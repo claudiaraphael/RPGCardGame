@@ -18,7 +18,11 @@ export async function getdndapi() {
         const response = await axios.get(dnd_url + "/api/2014/spells");
         console.log(response.data);
     } catch (error) {
-        console.log('Error fetching data:', error.message);
+        if (error instanceof Error) {
+            console.log('Erro ao buscar dados da D&D API:', error.message);
+        } else {
+            console.log('Erro desconhecido ao buscar dados da D&D API');
+        }
     }
 }
 
