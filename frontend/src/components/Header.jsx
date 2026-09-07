@@ -12,6 +12,7 @@ function Header() {
                     <li><a href="#">Cards</a></li>
                 </ul>
             </nav>
+            <hr></hr>
         </header>
     );
 }

@@ -1,7 +1,5 @@
-import { useState } from 'react';
 
 function MonsterSearch() {
-    // 1) initialize state
     return(
         <div className="monster-container">
             <h1>Monster Search</h1>
@@ -13,6 +11,7 @@ function MonsterSearch() {
             <button id="searchButton">Search</button>
             
             <div id="monsterResult" className="monster-result"></div>
+            <hr></hr>
         </div>        
     );
 };

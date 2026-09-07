@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    // Para qual versão de JS o código é compilado (ES2020 já suporta bem async/await, optional chaining etc.)
+    "target": "ES2020",
+
+    // "commonjs" é o sistema de módulos que o Node usa por padrão (require/module.exports)
+    "module": "commonjs",
+
+    // Permite usar "import express from 'express'" mesmo em libs que usam module.exports (CommonJS)
+    "esModuleInterop": true,
+
+    // Ativa todas as checagens de tipo mais rígidas (recomendado para aprender TS direito)
+    "strict": true,
+
+    // Onde o TypeScript procura os arquivos-fonte (.ts)
+    "rootDir": "./",
+
+    // Onde o TypeScript coloca o JavaScript compilado (gerado a partir do .ts)
+    "outDir": "./dist",
+
+    // Permite importar arquivos .json diretamente
+    "resolveJsonModule": true,
+
+    // Não checa tipos dentro de node_modules (mais rápido, evita erros de libs de terceiros)
+    "skipLibCheck": true,
+
+    // Garante que cada arquivo possa ser compilado isoladamente (boa prática)
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
