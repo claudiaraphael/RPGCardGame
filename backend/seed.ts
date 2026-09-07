@@ -8,7 +8,7 @@ import axios from 'axios';
 // axios equivalente ao requests
 
 process.loadEnvFile()
-dnd_url = process.env("DND_BASE_URL") // "https://www.dnd5eapi.co"
+let dnd_url = process.env("DND_BASE_URL") // "https://www.dnd5eapi.co"
 
 export async function getdndapi() {
     try {
