@@ -13,7 +13,7 @@ if (!dnd_url) {
     throw new Error("DND_BASE_URL não esta definida");
 }
 
-export async function getdndapi() {
+export async function getAllSpells() {
     try {
         const response = await axios.get(dnd_url + "/api/2014/spells");
         console.log(response.data);
@@ -26,7 +26,7 @@ export async function getdndapi() {
     }
 }
 
-getdndapi()
+getAllSpells()
 
 // fetch nativo
 
