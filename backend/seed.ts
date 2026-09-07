@@ -8,10 +8,11 @@ import axios from 'axios';
 // axios equivalente ao requests
 
 process.loadEnvFile()
+dnd_url = process.env("DND_BASE_URL") // "https://www.dnd5eapi.co"
 
-async function getdndapi() {
+export async function getdndapi() {
     try {
-        const response = await axios.get(DND_BASE_URL);
+        const response = await axios.get(dnd_url + "/api/2014/spells");
         console.log(response.data);
     } catch (error) {
         console.log('Error fetching data:', error.message);
