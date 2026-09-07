@@ -7,8 +7,11 @@ import axios from 'axios';
 
 // axios equivalente ao requests
 
-process.loadEnvFile()
-let dnd_url = process.env("DND_BASE_URL") // "https://www.dnd5eapi.co"
+process.loadEnvFile();
+const dnd_url = process.env.DND_BASE_URL
+if (!dnd_url) {
+    throw new Error("DND_BASE_URL não esta definida");
+}
 
 export async function getdndapi() {
     try {
