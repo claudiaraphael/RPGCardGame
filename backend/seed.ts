@@ -15,8 +15,9 @@ if (!dnd_url) {
 
 export async function getAllSpells() {
     try {
-        const response = await axios.get(dnd_url + "/api/2014/spells");
-        console.log(response.data);
+        const response = await axios.get(dnd_url + "/api/2014/spells")
+        const spellIndexes = response.data
+        return spellIndexes;
     } catch (error) {
         if (error instanceof Error) {
             console.log('Erro ao buscar dados da D&D API:', error.message);

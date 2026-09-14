@@ -10,6 +10,4 @@ Resumo do que mudou:
     - npm run dev → nodemon + ts-node, roda o .ts direto e reinicia sozinho
     - npm run build → compila para dist/
     - npm start → roda a versão compilada (uso "produção")
-  - POST e PUT agora validam o corpo da requisição automaticamente via
-    validateBody(schema) — se você mandar um campo errado (ex: attack como texto),
-    a API responde 400 com o detalhe do erro, sem você escrever if manual.
+  - POST e PUT agora validam o corpo da requisição automaticamente via validateBody(schema) — se você mandar um campo errado (ex: attack como texto), a API responde 400 com o detalhe do erro, sem você escrever if manual.
