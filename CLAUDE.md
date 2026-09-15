@@ -14,21 +14,42 @@ deve ser preservado/seguido ao editar esses arquivos.
 
 ## Estrutura do repositório
 
+O backend segue a **arquitetura em camadas (layered architecture)** padrão de
+mercado para APIs Express: `routes → controllers → services → repositories`,
+com `schemas` (Zod) como fonte única de verdade e `docs` para a geração do
+OpenAPI/Swagger. Ver o mapa completo em [`backend/architecture.md`](backend/architecture.md).
+
 ```
 RPGCardGame/
 ├── backend/
-│   ├── server.ts              # API Express (CRUD de "cards", em memória)
-│   ├── seed.ts                # (vazio) reservado para popular um banco de dados
-│   ├── app.py                 # script Python de exemplo, consulta a D&D 5e API
-│   ├── database.db            # (vazio) reservado para uma futura persistência em SQLite
-│   ├── bin/dnd_race_search.sh # script bash interativo p/ buscar raças na D&D 5e API
-│   ├── .env                   # DND_BASE_URL
+│   ├── src/
+│   │   ├── server.ts                # ponto de entrada, só sobe o servidor HTTP
+│   │   ├── app.ts                   # monta o Express (middlewares, rotas, /docs)
+│   │   ├── routes/
+│   │   │   └── card.routes.ts       # mapeia URL + método HTTP -> controller
+│   │   ├── controllers/
+│   │   │   └── card.controller.ts   # req/res, sem regra de negócio
+│   │   ├── services/
+│   │   │   └── card.service.ts      # regra de negócio das cartas
+│   │   ├── repositories/
+│   │   │   └── card.repository.ts   # acesso a dados (hoje: array em memória)
+│   │   ├── schemas/
+│   │   │   └── card.schema.ts       # Zod: validação + tipos + base p/ OpenAPI
+│   │   ├── middlewares/
+│   │   │   └── validateBody.ts      # valida req.body contra um schema Zod
+│   │   └── docs/
+│   │       └── openapi.ts           # registra as rotas no OpenAPI a partir dos schemas Zod
+│   ├── seed.ts                 # (vazio) reservado para popular um banco de dados
+│   ├── app.py                  # script Python de exemplo, consulta a D&D 5e API
+│   ├── database.db             # (vazio) reservado para uma futura persistência em SQLite
+│   ├── bin/dnd_race_search.sh  # script bash interativo p/ buscar raças na D&D 5e API
+│   ├── .env                    # DND_BASE_URL
+│   ├── architecture.md         # mapa de arquitetura em camadas do backend
 │   ├── tsconfig.json
 │   ├── package.json
 │   └── Documentation/
 │       ├── documentation.md   # changelog/notas da migração para Zod + TS
 │       ├── quickstart.md      # como rodar frontend + backend em paralelo
-│       ├── architecture.md    # esboço de estrutura de pastas (rascunho)
 │       └── dnd_api_requests.json
 └── frontend/
     ├── index.html
@@ -56,10 +77,12 @@ RPGCardGame/
 `.jsx` e `.tsx` (migração em andamento). Sem roteador nem gerenciador de estado
 global.
 
-**Backend**: Express 5 + TypeScript, validação e documentação via
-[Zod](https://zod.dev/) + `@asteasolutions/zod-to-openapi` (gera OpenAPI a
-partir dos mesmos schemas Zod — ver `backend/server.ts`), Swagger UI em
-`/docs`. Os dados de `cards` hoje vivem só em memória (array `cards[]`); não
+**Backend**: Express 5 + TypeScript, organizado em arquitetura em camadas
+(`routes` → `controllers` → `services` → `repositories`), com validação e
+documentação via [Zod](https://zod.dev/) + `@asteasolutions/zod-to-openapi`
+(gera OpenAPI a partir dos mesmos schemas Zod — ver `backend/src/schemas/` e
+`backend/src/docs/openapi.ts`), Swagger UI em `/docs`. Os dados de `cards`
+hoje vivem só em memória (`backend/src/repositories/card.repository.ts`); não
 há banco de dados conectado ainda, embora `database.db` e `seed.ts` existam
 como placeholders para isso.
 
@@ -71,8 +94,8 @@ consultar a D&D 5e API, não fazem parte do fluxo do servidor Express.
 
 ```bash
 # Backend (dentro de backend/)
-npm run dev     # nodemon + ts-node, roda server.ts com reload automático
-npm run build   # compila para dist/ (tsc)
+npm run dev     # nodemon + ts-node, roda src/server.ts com reload automático
+npm run build   # compila src/ para dist/ (tsc)
 npm start       # roda a versão compilada (dist/server.js)
 
 # Frontend (dentro de frontend/)
@@ -98,13 +121,15 @@ como configuração local: não adicione segredos reais nele sem atualizar
 ## Convenções e pontos de atenção
 
 - **Comentários em português, com propósito didático**: mantenha esse tom ao
-  editar `server.ts`, `app.py` e os arquivos em `Documentation/`. Não são
-  "ruído" a remover — fazem parte do propósito do projeto.
-- **Zod como fonte única de verdade** no backend: um schema Zod define
-  validação, tipo TypeScript (`z.infer`) e documentação OpenAPI ao mesmo
-  tempo. Ao adicionar uma rota nova, siga esse padrão (schema → `registry.
-  registerPath` → handler com `validateBody`) em vez de duplicar validação
-  manual.
+  editar os arquivos em `backend/src/`, `app.py` e os arquivos em
+  `Documentation/`. Não são "ruído" a remover — fazem parte do propósito do
+  projeto.
+- **Zod como fonte única de verdade** no backend: um schema Zod (em
+  `backend/src/schemas/`) define validação, tipo TypeScript (`z.infer`) e
+  documentação OpenAPI ao mesmo tempo. Ao adicionar uma rota nova, siga o
+  fluxo em camadas já estabelecido — `schema → repository → service →
+  controller → route → registro em docs/openapi.ts` — em vez de duplicar
+  validação manual ou misturar responsabilidades num único arquivo.
 - **Frontend e backend ainda não estão integrados**: `MonsterSearch.tsx`
   chama a D&D 5e API diretamente do navegador; o CRUD de `/cards` do backend
   não é consumido pelo frontend ainda. Isso é esperado no estado atual do

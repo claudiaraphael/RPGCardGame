@@ -13,7 +13,7 @@
     "strict": true,
 
     // Onde o TypeScript procura os arquivos-fonte (.ts)
-    "rootDir": "./",
+    "rootDir": "./src",
 
     // Onde o TypeScript coloca o JavaScript compilado (gerado a partir do .ts)
     "outDir": "./dist",
@@ -27,6 +27,6 @@
     // Garante que cada arquivo possa ser compilado isoladamente (boa prática)
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
