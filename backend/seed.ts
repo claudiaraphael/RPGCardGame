@@ -1,11 +1,20 @@
-import axios from 'axios';
+import axios from 'axios'; // axios equivalente ao requests
+import process from 'process';
 
-/* "stack recomendado" pro seu seed.ts: process.loadEnvFile (ou dotenv) 
+/* 
+"stack recomendado" pro seu seed.ts: process.loadEnvFile (ou dotenv) 
 + fetch nativo + try/catch + Zod pra validar o JSON 
-— tudo sem instalar nenhuma dependência nova além do que o projeto já usa. 
 */
 
-// axios equivalente ao requests
+// todo: colocar o fucking banco de dados
+// todo: modelar o jogo (ESTADOS:SAVES, TURNOS, BUILD, MAO, DECK... turnos, fases, etc) e criar seeds pra ele
+// todo: pra começar o jogo tera so um turno, no qual o seu objetivo é ter uma build que mantenha seupersonagem vivo ate o fim e mate o monstro.
+    // todo: modelar a build do personagem (armas, armaduras, magias, etc) e criar seeds pra elas
+    // todo: modelar o personagem (classe, atributos etc) e criar seeds pra ele
+
+    // todo: modelar a cartas: monstros, spells,
+// todo: modelar outras entidades (monstros, classes, etc) e criar seeds pra elas
+
 
 process.loadEnvFile();
 const dnd_url = process.env.DND_BASE_URL

@@ -4,13 +4,7 @@ RPGCardGame/
 │   │   ├── server.ts               <-- ponto de entrada, só sobe o servidor HTTP
 │   │   ├── app.ts                  <-- monta o Express (middlewares, rotas, /docs)
 │   │   ├── routes/
-│   │   │   └── card.routes.ts      <-- mapeia URL + método HTTP -> controller
-│   │   ├── controllers/
-│   │   │   └── card.controller.ts  <-- req/res, sem regra de negócio
-│   │   ├── services/
-│   │   │   └── card.service.ts     <-- regra de negócio das cartas
-│   │   ├── repositories/
-│   │   │   └── card.repository.ts  <-- acesso aos dados (hoje: array em memória)
+│   │   │   └── card.routes.ts      <-- rotas + regra de negócio + dados das cartas (tudo junto)
 │   │   ├── schemas/
 │   │   │   └── card.schema.ts      <-- Zod: validação + tipos + base p/ OpenAPI
 │   │   ├── middlewares/
