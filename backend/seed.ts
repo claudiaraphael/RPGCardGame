@@ -11,16 +11,36 @@ import process from 'process';
 // todo: pra começar o jogo tera so um turno, no qual o seu objetivo é ter uma build que mantenha seupersonagem vivo ate o fim e mate o monstro.
     // todo: modelar a build do personagem (armas, armaduras, magias, etc) e criar seeds pra elas
     // todo: modelar o personagem (classe, atributos etc) e criar seeds pra ele
-
     // todo: modelar a cartas: monstros, spells,
-// todo: modelar outras entidades (monstros, classes, etc) e criar seeds pra elas
-
+    // todo: modelar outras entidades (monstros, classes, etc) e criar seeds pra elas
+// todo: criar seeds pra cada entidade do jogo (personagem, build, cartas, monstros, etc)
+// todo: conectar com o banco de dados e criar seeds pra ele direto. O banco de dados deve ser populado com todos os dados da api disponiveis mais os dados das cartas a serem geradas, do gerador em si, das cartas e dos decks. a aplicacao nao dependera de chamadas da api para rodar uma vez que tudo sera importado direto.
+// todo: criar seeds pra cada entidade do jogo (personagem, build, cartas, monstros, etc) e popular o banco de dados com elas
+// todo: docker pro back e docker pro front
+// todo: gerador de cartas (monstros, spells, etc) e decks (combos de cartas) com base nos dados do banco de dados, já consumido a api
 
 process.loadEnvFile();
 const dnd_url = process.env.DND_BASE_URL
 if (!dnd_url) {
     throw new Error("DND_BASE_URL não esta definida");
 }
+
+
+// EM PYTHON SERIA ASSIM
+@app.post("/api/criar_personagem", method=["POST"])
+
+// em TS/JS é assim
+
+
+
+
+
+
+
+
+
+
+
 
 export async function getAllSpells() {
     try {
