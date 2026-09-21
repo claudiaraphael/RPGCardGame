@@ -1,75 +1,103 @@
 # 🐉 RPG Card Game
 
-Um projeto de estudo (MVP de disciplina) para construir, aos poucos, um jogo de
-cartas de RPG inspirado em D&D 5e, usando **Node.js + TypeScript** no backend e
-os dados da [D&D 5e API](https://www.dnd5eapi.co/).
+Um jogo de cartas de RPG inspirado em D&D 5e, construído em **Node.js +
+TypeScript**, consumindo a [D&D 5e API](https://www.dnd5eapi.co/) como fonte
+de dados. Projeto de estudo (MVP de disciplina), focado em praticar
+modelagem de dados, gerenciamento de estado, depuração sistemática, design
+de fronteiras arquiteturais e raciocínio assíncrono — skills que ferramentas
+de IA não substituem, só apoiam.
 
-> Este projeto foi feito para praticar habilidades que ferramentas de IA não
-> substituem: modelagem de dados, gerenciamento de estado, depuração
-> sistemática, design de fronteiras arquiteturais e raciocínio assíncrono.
+## O que já funciona
 
-## Onde o projeto está hoje
+- ✅ **API REST completa para as 24 categorias da D&D API** (spells,
+  monsters, classes, races, equipment e mais 19) — cada uma com
+  `GET /<entidade>` e `GET /<entidade>/:index`, todas validadas por Zod.
+- ✅ **As 24 entidades foram validadas de ponta a ponta contra a API real**
+  (2.027 itens, 0 falhas). O resultado completo está versionado em
+  [`backend/to-do/documentation/dnd-full-data.json`](backend/to-do/documentation/dnd-full-data.json)
+  — é uma base de referência rica: todo o shape real de cada categoria da
+  D&D API, já validado, num arquivo só, sem precisar bater na rede de novo
+  pra consultar.
+- ✅ **SQLite conectado**, com sessão de login persistida nele (não em
+  memória) e cache local das entidades da D&D API (`dnd_cache`).
+- ✅ **CORS + sessão por cookie configurados corretamente** para o front
+  rodar em `localhost:5500` (Live Server) consumindo a API em
+  `localhost:3000`.
+- 🚧 Autenticação de usuário e os estados de jogo (personagem, deck, carta,
+  combate) estão em construção — ver [`backend/to-do/todo.md`](backend/to-do/todo.md)
+  pro roadmap completo.
 
-O repositório está em fase de **reconstrução**. A primeira versão (API Express
-com CRUD de cartas, Zod e Swagger) foi arquivada como referência em
-`backend/to-do/documentation/codigo-referencia-antigo.md`, e serviu de base
-para reescrever o esqueleto do servidor à mão. Por isso:
+## Arquitetura
 
-- ✅ já existe um **servidor Express mínimo** (`backend/src/`), com uma rota
-  `GET /<entidade>` e `GET /<entidade>/:index` para cada uma das 24 categorias
-  da D&D API já modeladas (spells, monsters, classes, races, equipment...);
-- ❌ ainda **não há banco de dados** (o plano agora é SQLite, não mais
-  Postgres) — cada requisição bate direto na D&D API por trás, sem cache;
-- ➡️ o **frontend** mudou para um repositório próprio, `RPGCardGame-frontend`
-  (HTML/CSS/JS puro, sem bundler, servido em dev pela extensão Live Server do
-  VS Code);
-- ✅ já existem o cliente genérico da D&D API, um schema Zod por categoria de
-  entidade, o dado d20 e o esboço do personagem.
+```
+RPGCardGame-frontend (repo próprio)          RPGCardGame (este repo)
+┌───────────────────────┐    REST     ┌──────────────────────────────┐
+│  Interface HTML/CSS/JS │ ──────────▶ │  API secundária (Node + TS)   │
+│  (Live Server, :5500)  │ ◀────────── │  Express + SQLite (:3000)     │
+└───────────────────────┘             └──────────────┬───────────────┘
+                                                       │ REST
+                                                       ▼
+                                          D&D 5e API (api externa)
+                                          https://www.dnd5eapi.co
+```
+
+O front nunca fala direto com a D&D API — só com esta API secundária, que
+consulta a D&D API por trás e devolve dado já validado.
 
 ## O que tem aqui dentro
 
 ```
 backend/
 ├── src/
-│   ├── app.ts               # Express: CORS, body limit, rotas, error handler
-│   ├── server.ts            # liga o app.ts na porta 3000
+│   ├── app.ts                # Express: CORS+credentials, sessão, rotas, error handler
+│   ├── server.ts              # liga o app.ts na porta 3000
 │   └── routes/
-│       ├── entityRouter.ts  # fábrica genérica: GET / e GET /:index por entidade
-│       └── index.ts         # registra as 24 entidades da D&D API nessa fábrica
-├── testes/                  # notas de design pra quando testes automatizados entrarem
-├── seed.ts                  # funções que consultam a D&D API (spells etc.) — script avulso
-├── dado/d20.ts               # rolagem de d20
-├── personagem/               # interface Personagem (esboço)
+│       ├── entityRouter.ts    # fábrica genérica: GET / e GET /:index por entidade
+│       └── index.ts           # registra as 24 entidades da D&D API nessa fábrica
+├── db/
+│   ├── connection.ts          # conexão SQLite (better-sqlite3)
+│   ├── schema.ts               # tabela dnd_cache (cache da API externa)
+│   ├── seedDndCache.ts          # popula o cache, com retry
+│   └── runSeed.ts                # roda o seed (spells já ligado)
+├── auth/
+│   └── sessionStore.ts         # sessão de login persistida no SQLite
 ├── entidades-dnd/
-│   ├── dnd-api-client.ts    # cliente axios genérico para a D&D API
-│   └── schemas/             # um schema Zod por categoria (spells, monsters, classes...)
-├── auth/                     # esboço não funcional, ainda não conectado a nenhuma rota
-└── to-do/                    # checklist, requerimento do MVP e documentação
+│   ├── dnd-api-client.ts       # cliente axios genérico pra D&D API
+│   └── schemas/                # um schema Zod por categoria (spells, monsters, classes...)
+├── testes/                     # notas de design pra quando testes automatizados entrarem
+├── dado/d20.ts                  # rolagem de d20
+├── personagem/                   # modelagem do personagem (em construção)
+└── to-do/
+    ├── todo.md                   # roadmap completo
+    └── documentation/
+        └── dnd-full-data.json     # dump completo e validado das 24 entidades
 ```
 
 ## Pré-requisitos
 
-- [Node.js](https://nodejs.org/) 20.6+ (necessário para `process.loadEnvFile`) e `npm`
+- [Node.js](https://nodejs.org/) 20.6+ (usa `process.loadEnvFile`) e `npm`
 
-## Como preparar o ambiente
+## Instalação
 
 ```bash
 cd backend
 npm install
 ```
 
-O backend lê a URL base da D&D API do arquivo `backend/.env` (variável
-`DND_BASE_URL`, que já existe no projeto). É uma URL pública, sem segredos.
+Copie `backend/.env.example` para `backend/.env` e preencha:
+
+- `DND_BASE_URL` — URL pública da D&D API (`https://www.dnd5eapi.co`)
+- `SESSION_SECRET` — qualquer string aleatória local, usada só pra assinar
+  o cookie de sessão (não precisa ser a mesma em cada máquina)
 
 ## Rodando o servidor
 
 ```bash
-cd backend
 npm run dev
 ```
 
 Sobe em `http://localhost:3000`. Rotas disponíveis (uma por entidade da D&D
-API, todas em `src/routes/index.ts`):
+API):
 
 ```
 ability-scores, alignments, backgrounds, classes, conditions, damage-types,
@@ -78,29 +106,33 @@ magic-schools, monsters, proficiencies, races, rule-sections, rules, skills,
 spells, subclasses, subraces, traits, weapon-properties
 ```
 
-Cada uma dessas expõe `GET /<entidade>` (lista resumida) e
-`GET /<entidade>/:index` (item completo) — ex: `GET /monsters/aboleth`,
-`GET /spells/acid-arrow`.
+Cada uma expõe `GET /<entidade>` (lista resumida) e `GET /<entidade>/:index`
+(item completo) — por exemplo:
 
-Cada resposta já passa pelo schema Zod correspondente antes de sair — se o
-formato vindo da D&D API não bater com o schema, a rota responde com erro em
-vez de devolver dado não validado.
+```bash
+curl http://localhost:3000/monsters/aboleth
+curl http://localhost:3000/spells/acid-arrow
+curl http://localhost:3000/classes/cleric
+```
 
-O CORS em `src/app.ts` só libera `http://localhost:5500` e
-`http://127.0.0.1:5500` (onde o Live Server do front roda em dev). Se você
-rodar o front noutra porta, precisa atualizar essa lista.
+Toda resposta já passou pelo schema Zod da entidade correspondente antes de
+sair pro cliente.
 
-Para conferir se os tipos estão corretos:
+## Populando o banco local
+
+```bash
+npx ts-node db/runSeed.ts
+```
+
+Busca a entidade na D&D API, valida cada item e grava em `dnd_cache`
+(SQLite). Hoje cobre `spells` (319 itens); estender pra outra entidade é
+uma chamada a mais em `db/runSeed.ts`, reaproveitando o mesmo par
+`getXList`/`getXByIndex` que já existe em `entidades-dnd/schemas/`.
+
+## Checando os tipos
 
 ```bash
 npx tsc --noEmit
-```
-
-Para rodar um script isolado (ex: `seed.ts`, que **não** faz parte do
-servidor — é um script avulso de popular dados, não algo que fica no ar):
-
-```bash
-npx ts-node seed.ts
 ```
 
 ## Scripts do backend
@@ -111,39 +143,47 @@ npx ts-node seed.ts
 | `npm run build` | ✅ compila para `dist/` |
 | `npm run dev` | ✅ nodemon + ts-node `src/server.ts` → `http://localhost:3000` |
 | `npm start` | ✅ `node dist/server.js` (rodar depois de `npm run build`) |
-
-## Próximos passos
-
-O checklist completo está em [`backend/to-do/todo.md`](backend/to-do/todo.md).
-Em resumo:
-
-1. terminar o `seed.ts` (tratamento de erros e validação com Zod, hoje só as
-   rotas em `src/routes/` fazem essa validação);
-2. subir SQLite e ligar o backend a ele, pra parar de bater na D&D API a cada
-   requisição;
-3. modelar personagem, build, cartas e decks;
-4. gerador de cartas a partir dos dados da D&D API;
-5. integrar de verdade com o frontend (fetch, botões, estado do jogo).
+| `npx ts-node db/runSeed.ts` | ✅ popula o SQLite a partir da D&D API |
 
 ## Segurança
 
-- Nunca commite segredos: senhas, tokens ou strings de conexão de banco devem
-  ficar fora do git.
-- O `.env` está no `.gitignore` e hoje só guarda a URL pública da D&D API.
-- Os dados vindos da API externa são validados com Zod antes de serem
-  devolvidos pelas rotas.
-- CORS com origem explícita (nunca `*`), limite de tamanho de body
-  (`express.json({ limit: "100kb" })`) e error handler que nunca expõe stack
-  trace ao cliente.
+- Segredos (inclusive `SESSION_SECRET`) ficam só em `backend/.env`, fora do
+  git (`.gitignore` cobre `.env`, `*.env.*` e o `database.sqlite` gerado
+  localmente).
+- CORS com origem explícita + `credentials: true`, nunca `*`.
+- Cookie de sessão `httpOnly`, `sameSite: "lax"`.
+- Todo dado vindo da API externa é validado com Zod antes de ser devolvido
+  ou persistido.
+- Error handler central nunca expõe stack trace ao cliente.
+- Limite de tamanho de body (`express.json({ limit: "100kb" })`).
+
+## Próximos passos
+
+Roadmap completo em [`backend/to-do/todo.md`](backend/to-do/todo.md). Em
+resumo, o que falta:
+
+1. terminar a modelagem de usuário/personagem/build e ligar a autenticação;
+2. estender o seed pras outras 23 entidades (hoje só `spells` está no banco);
+3. gerador de cartas a partir dos dados já validados da D&D API;
+4. front consumindo a API de ponta a ponta (fetch, estado do jogo, combate);
+5. Docker + vídeo de entrega.
 
 ## Documentação extra
 
 Em `backend/to-do/documentation/`:
 
-- `Mapa dos Dados de D&D5e.md` — shape das respostas de cada categoria da API
+- **`dnd-full-data.json`** — dump completo e validado das 24 categorias da
+  D&D API (2.027 itens). A referência mais confiável pro shape real de
+  qualquer entidade, sem precisar consultar a API de novo.
+- `Mapa dos Dados de D&D5e.md` — shape das respostas de cada categoria (lista + exemplo)
 - `dnd5e-api-mapping.md` e `dnd_api_requests.json` — notas e exemplos de requisições
-- `quickstart.md` e `documentation.md` — guias da versão anterior (podem estar defasados)
 - `codigo-referencia-antigo.md` — código arquivado do CRUD de `/cards`, base pro esqueleto atual de `src/`
 
-Em `backend/testes/README.md`: nota sobre por que `app.ts`/`server.ts` são
-separados e como isso vai ser usado quando testes automatizados entrarem.
+Em `backend/testes/README.md`: por que `app.ts`/`server.ts` são separados e
+como isso vai ser usado quando testes automatizados entrarem.
+
+## API externa utilizada
+
+[D&D 5e API](https://www.dnd5eapi.co/) — pública, sem autenticação nem
+cadastro, licença aberta (dados de SRD 5.1, ver [dnd5eapi.co/docs/legal](https://5e-bits.github.io/docs/legal)).
+Rotas consumidas: as 24 listadas acima, sob `/api/2014/`.

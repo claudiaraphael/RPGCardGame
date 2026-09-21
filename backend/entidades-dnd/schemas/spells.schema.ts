@@ -9,10 +9,22 @@
 // que causa dano) — por isso ficou opcional. Spells de dano têm um campo
 // "damage" (com damage_at_slot_level) que NENHUM exemplo real confirmou
 // ainda — não foi modelado, ver ressalva no relatório final.
+//
+// "dc" de spell NÃO é o DcSchema compartilhado (esse é o formato de
+// monstro: dc_type/dc_value/success_type). Descoberto rodando o seed de
+// verdade contra as 319 spells: "acid-splash" e outras 91 falhavam a
+// validação porque o dc de spell só tem dc_type + dc_success (sem
+// dc_value nenhum) — "acid-arrow", o exemplo usado originalmente, não
+// tinha campo "dc" pra pegar essa diferença.
 
 import { z } from "zod";
 import { fetchFromDndApi } from "../dnd-api-client";
-import { ApiReferenceSchema, DcSchema } from "./shared.schema";
+import { ApiReferenceSchema } from "./shared.schema";
+
+const SpellDcSchema = z.object({
+  dc_type: ApiReferenceSchema,
+  dc_success: z.string(),
+});
 
 export const SpellSummarySchema = z.object({
   index: z.string(),
@@ -36,7 +48,7 @@ export const SpellSchema = z.object({
   casting_time: z.string(),
   level: z.number(),
   attack_type: z.string().optional(),
-  dc: DcSchema.optional(),
+  dc: SpellDcSchema.optional(),
   heal_at_slot_level: z.record(z.string(), z.string()).optional(),
   school: ApiReferenceSchema,
   classes: z.array(ApiReferenceSchema),

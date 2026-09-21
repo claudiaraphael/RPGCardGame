@@ -1,20 +1,28 @@
+export type UserRole = "user" | "admin";
+
+import Date from 'Date';
+
 const { string } = require("zod");
 const id = require("zod/v4/locales/id.cjs");
 
-const class User() {
-    id: "?",
-    username: string,
-    password: "?",
-    email: string,
+export interface User {
+    id: string;
+    email: string;
+    passwordHash: string;
+    username: string;
+    role: UserRole;
+    isEmailVerified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
 
-    
 
-    const Party(Party, Character) {
+
+
+/*
+const Party(Party, Character) {
         char00: "?",
     }
-
-
-}
 
 let Character {
         id: "",
@@ -25,3 +33,4 @@ let Character {
         shoes: string,
 
     }
+*/

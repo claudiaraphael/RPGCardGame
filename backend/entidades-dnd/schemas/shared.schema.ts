@@ -75,6 +75,17 @@ export const UsageSchema = z.object({
 // recursiva: uma Option pode ser do tipo "choice", que contém outra Choice
 // dentro — por isso os três schemas abaixo se referenciam via z.lazy().
 
+// { type, proficiency } — pré-requisito de uma opção de equipamento (ex:
+// só pode escolher "warhammer" se já for proficiente nela). Descoberto
+// rodando o dump completo das 24 entidades contra "classes": vinha junto
+// de "counted_reference" em cleric/paladin, mas era descartado em silêncio
+// pelo modo "strip" padrão do Zod (chave desconhecida não dá erro) — por
+// isso não quebrava a validação, só perdia a informação.
+const PrerequisiteSchema = z.object({
+  type: z.string(),
+  proficiency: ApiReferenceSchema,
+});
+
 // Um item dentro de "options" de um options_array. O formato muda conforme
 // "option_type" (união: referência simples, referência com quantidade,
 // texto livre, ideal com alinhamentos, ou outra escolha aninhada).
@@ -88,6 +99,7 @@ export const OptionSchema: z.ZodType<unknown> = z.lazy(() =>
       option_type: z.literal("counted_reference"),
       count: z.number(),
       of: ApiReferenceSchema,
+      prerequisites: z.array(PrerequisiteSchema).optional(),
     }),
     z.object({
       option_type: z.literal("string"),
@@ -111,6 +123,15 @@ export const OptionSchema: z.ZodType<unknown> = z.lazy(() =>
     z.object({
       option_type: z.literal("choice"),
       choice: ChoiceSchema,
+    }),
+    // Descoberto no mesmo dump: uma opção pode ser um combo de vários itens
+    // juntos (ex: "besta leve + 20 virotes" como uma única alternativa de
+    // "escolha 1"), não coberto pelas variantes acima. É recursivo (cada
+    // item de "items" é ele mesmo um Option) — por isso só funciona por
+    // causa do z.lazy() que já envolve este schema inteiro.
+    z.object({
+      option_type: z.literal("multiple"),
+      items: z.array(OptionSchema),
     }),
   ])
 );
