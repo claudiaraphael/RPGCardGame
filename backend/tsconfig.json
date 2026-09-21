@@ -12,8 +12,11 @@
     // Ativa todas as checagens de tipo mais rígidas (recomendado para aprender TS direito)
     "strict": true,
 
-    // Onde o TypeScript procura os arquivos-fonte (.ts)
-    "rootDir": "./src",
+    // Onde o TypeScript procura os arquivos-fonte (.ts). Não tem mais um
+    // src/ único — os arquivos ficam em pastas por domínio direto na raiz
+    // do backend (personagem/, entidades-dnd/, seed.ts, etc.), então a raiz
+    // do rootDir é a própria pasta backend/.
+    "rootDir": ".",
 
     // Onde o TypeScript coloca o JavaScript compilado (gerado a partir do .ts)
     "outDir": "./dist",
@@ -27,6 +30,6 @@
     // Garante que cada arquivo possa ser compilado isoladamente (boa prática)
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

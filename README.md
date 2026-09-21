@@ -1,237 +1,149 @@
 # 🐉 RPG Card Game
 
-Um projeto de estudo para praticar **React** no frontend e **Node.js + TypeScript
-+ Express** no backend, construindo aos poucos um jogo de cartas de RPG
-inspirado em D&D 5e — com direito a busca de monstros na [D&D 5e
-API](https://www.dnd5eapi.co/) de verdade.
+Um projeto de estudo (MVP de disciplina) para construir, aos poucos, um jogo de
+cartas de RPG inspirado em D&D 5e, usando **Node.js + TypeScript** no backend e
+os dados da [D&D 5e API](https://www.dnd5eapi.co/).
 
-Se você chegou aqui, este guia te coloca rodando o projeto localmente em
-poucos minutos. Bora lá!
+> Este projeto foi feito para praticar habilidades que ferramentas de IA não
+> substituem: modelagem de dados, gerenciamento de estado, depuração
+> sistemática, design de fronteiras arquiteturais e raciocínio assíncrono.
+
+## Onde o projeto está hoje
+
+O repositório está em fase de **reconstrução**. A primeira versão (API Express
+com CRUD de cartas, Zod e Swagger) foi arquivada como referência em
+`backend/to-do/documentation/codigo-referencia-antigo.md`, e serviu de base
+para reescrever o esqueleto do servidor à mão. Por isso:
+
+- ✅ já existe um **servidor Express mínimo** (`backend/src/`), com uma rota
+  `GET /<entidade>` e `GET /<entidade>/:index` para cada uma das 24 categorias
+  da D&D API já modeladas (spells, monsters, classes, races, equipment...);
+- ❌ ainda **não há banco de dados** (o plano agora é SQLite, não mais
+  Postgres) — cada requisição bate direto na D&D API por trás, sem cache;
+- ➡️ o **frontend** mudou para um repositório próprio, `RPGCardGame-frontend`
+  (HTML/CSS/JS puro, sem bundler, servido em dev pela extensão Live Server do
+  VS Code);
+- ✅ já existem o cliente genérico da D&D API, um schema Zod por categoria de
+  entidade, o dado d20 e o esboço do personagem.
 
 ## O que tem aqui dentro
 
-- **`frontend/`** — interface em React (Vite), com busca de monstros, cartão
-  de perfil e as primeiras peças de UI do jogo.
-- **`backend/`** — API em Express + TypeScript com CRUD de cartas, organizada
-  em **arquitetura em camadas** (padrão de mercado para APIs Express),
-  validada e documentada automaticamente via Zod (tem até Swagger!).
-- Alguns scripts avulsos (`app.py`, `dnd_race_search.sh`) que são exemplos de
-  como consultar a D&D 5e API fora do navegador.
-
-## Mapa de arquitetura (backend)
-
-O backend segue o padrão **layered architecture** (camadas) mais comum em
-APIs Express/Node — cada camada só conhece a camada logo abaixo dela, o que
-facilita testar, trocar peças (ex: trocar o array em memória por um banco de
-verdade) e entender "onde mexer" quando for adicionar algo novo.
-
 ```
-                         ┌───────────────────────┐
-  requisição HTTP  ────▶ │   routes/*.routes.ts    │  define os endpoints
-                         └───────────┬───────────┘
-                                     │
-                         ┌───────────▼───────────┐
-                         │ controllers/*.controller│  traduz HTTP (req/res)
-                         │          .ts            │  chama o service certo
-                         └───────────┬───────────┘
-                                     │
-                         ┌───────────▼───────────┐
-                         │  services/*.service.ts  │  regra de negócio
-                         └───────────┬───────────┘
-                                     │
-                         ┌───────────▼───────────┐
-                         │repositories/*.repository│  acesso aos dados
-                         │          .ts            │  (hoje: array em memória)
-                         └───────────┬───────────┘
-                                     │
-                              [ dados / futuro DB ]
-
-        transversal a todas as camadas:
-        ├── schemas/*.schema.ts   → Zod: validação + tipos + base OpenAPI
-        ├── middlewares/*.ts      → ex: validateBody (roda antes do controller)
-        └── docs/openapi.ts       → gera a doc Swagger a partir dos schemas
+backend/
+├── src/
+│   ├── app.ts               # Express: CORS, body limit, rotas, error handler
+│   ├── server.ts            # liga o app.ts na porta 3000
+│   └── routes/
+│       ├── entityRouter.ts  # fábrica genérica: GET / e GET /:index por entidade
+│       └── index.ts         # registra as 24 entidades da D&D API nessa fábrica
+├── testes/                  # notas de design pra quando testes automatizados entrarem
+├── seed.ts                  # funções que consultam a D&D API (spells etc.) — script avulso
+├── dado/d20.ts               # rolagem de d20
+├── personagem/               # interface Personagem (esboço)
+├── entidades-dnd/
+│   ├── dnd-api-client.ts    # cliente axios genérico para a D&D API
+│   └── schemas/             # um schema Zod por categoria (spells, monsters, classes...)
+├── auth/                     # esboço não funcional, ainda não conectado a nenhuma rota
+└── to-do/                    # checklist, requerimento do MVP e documentação
 ```
-
-Fluxo de uma requisição, por exemplo `POST /cards`:
-
-1. `routes/card.routes.ts` recebe a chamada e aplica `validateBody(CreateCardSchema)`
-2. `controllers/card.controller.ts` lê `req.body` (já validado) e chama o service
-3. `services/card.service.ts` aplica a regra de negócio (hoje é direto)
-4. `repositories/card.repository.ts` grava a nova carta (hoje: no array em memória)
-5. a resposta volta camada a camada até o controller, que devolve o JSON
-
-Mapa completo de pastas em [`backend/architecture.md`](backend/architecture.md).
 
 ## Pré-requisitos
 
-- [Node.js](https://nodejs.org/) 18+ (recomendado 20+) e `npm`
-- Opcional: Python 3 (só se quiser rodar `backend/app.py`)
+- [Node.js](https://nodejs.org/) 20.6+ (necessário para `process.loadEnvFile`) e `npm`
 
-## 🌟 Happy path — do zero até tudo funcionando
-
-Se é a sua primeira vez aqui, siga esta sequência na ordem e em ~5 minutos
-você vê o projeto inteiro de pé. Cada passo tem um jeito de confirmar que deu
-certo antes de seguir pro próximo.
-
-1. **Instale as dependências do backend**
-   ```bash
-   cd backend
-   npm install
-   ```
-2. **Suba a API**
-   ```bash
-   npm run dev
-   ```
-   ✅ Confirma que deu certo: o terminal mostra
-   `Servidor rodando em http://localhost:3000`.
-3. **Veja a API viva no Swagger** — abra
-   [http://localhost:3000/docs](http://localhost:3000/docs) no navegador.
-   ✅ Confirma: a página lista as rotas `GET/POST/PUT/DELETE /cards`.
-4. **Liste as cartas que já existem** (em outro terminal, deixe o backend rodando)
-   ```bash
-   curl http://localhost:3000/cards
-   ```
-   ✅ Confirma: retorna um JSON com "Dragão de Fogo" e "Cura Menor".
-5. **Crie a sua primeira carta**
-   ```bash
-   curl -X POST http://localhost:3000/cards \
-     -H "Content-Type: application/json" \
-     -d '{"name": "Fênix Sombria", "type": "Monstro", "attack": 75}'
-   ```
-   ✅ Confirma: volta a carta criada com um `id` novo (status 201).
-6. **Instale e suba o frontend** (em um terceiro terminal)
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-   ✅ Confirma: abra [http://localhost:5173](http://localhost:5173) e a
-   interface carrega, com o campo de busca de monstros visível.
-7. **Busque um monstro de verdade** — no campo de busca, digite `goblin` (em
-   inglês) e clique em "Search".
-   ✅ Confirma: os dados do goblin aparecem na tela, vindos direto da D&D 5e API.
-
-Chegou até aqui? 🎉 Você tem o backend, a documentação interativa, o CRUD de
-cartas e o frontend rodando ao mesmo tempo. Os próximos passos naturais são
-explorar `/docs` para testar as outras rotas (`GET /cards/:id`, `PUT`,
-`DELETE`) e dar uma olhada no [mapa de arquitetura](#mapa-de-arquitetura-backend)
-acima para entender onde cada peça mora.
-
-## Colocando pra rodar
-
-O projeto tem duas partes independentes — vale a pena abrir **dois
-terminais**, um para cada uma.
-
-### 1. Backend (a API)
+## Como preparar o ambiente
 
 ```bash
 cd backend
 npm install
-npm run dev
 ```
 
-Isso sobe a API em **http://localhost:3000** com reload automático a cada
-alteração. Dois endereços valem a visita:
+O backend lê a URL base da D&D API do arquivo `backend/.env` (variável
+`DND_BASE_URL`, que já existe no projeto). É uma URL pública, sem segredos.
 
-- `http://localhost:3000/cards` — a API de cartas (CRUD)
-- `http://localhost:3000/docs` — documentação interativa (Swagger UI), onde
-  dá pra testar cada rota direto do navegador
-
-### 2. Frontend (a interface)
-
-Em outro terminal:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Abra **http://localhost:5173** e pronto — a interface já sobe com hot reload.
-
-> 💡 Hoje o frontend e o backend ainda não conversam entre si: a busca de
-> monstros na tela consulta a D&D 5e API diretamente do navegador, e o CRUD
-> de cartas do backend ainda não aparece na interface. Isso é esperado no
-> estágio atual do projeto — é uma das próximas peças a encaixar!
-
-## Experimentando a API de cartas
-
-Com o backend rodando, você pode brincar com o CRUD direto pelo terminal:
-
-```bash
-# listar todas as cartas
-curl http://localhost:3000/cards
-
-# criar uma carta nova
-curl -X POST http://localhost:3000/cards \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Fênix Sombria", "type": "Monstro", "attack": 75}'
-
-# buscar uma carta específica
-curl http://localhost:3000/cards/1
-```
-
-Ou, mais fácil ainda, use a página `/docs` para testar tudo visualmente.
-
-> As cartas ficam guardadas em memória — se você reiniciar o servidor
-> (`npm run dev`), a lista volta ao estado inicial. Persistência em banco de
-> dados é um dos próximos passos do projeto.
-
-## Buscando um monstro
-
-Na tela inicial do frontend há um campo de busca de monstros: digite um nome
-(em inglês, como na D&D 5e API — ex: `goblin`, `adult-red-dragon`) e clique em
-"Search" para ver os dados vindos direto da API pública.
-
-Se preferir testar pelo terminal, tem um script pronto:
+## Rodando o servidor
 
 ```bash
 cd backend
-./bin/dnd_race_search.sh
+npm run dev
 ```
 
-Ele pergunta o nome de uma raça de D&D e mostra a resposta da API.
+Sobe em `http://localhost:3000`. Rotas disponíveis (uma por entidade da D&D
+API, todas em `src/routes/index.ts`):
 
-## Scripts disponíveis
+```
+ability-scores, alignments, backgrounds, classes, conditions, damage-types,
+equipment, equipment-categories, feats, features, languages, magic-items,
+magic-schools, monsters, proficiencies, races, rule-sections, rules, skills,
+spells, subclasses, subraces, traits, weapon-properties
+```
 
-**Backend** (`backend/`):
+Cada uma dessas expõe `GET /<entidade>` (lista resumida) e
+`GET /<entidade>/:index` (item completo) — ex: `GET /monsters/aboleth`,
+`GET /spells/acid-arrow`.
 
-| Comando | O que faz |
+Cada resposta já passa pelo schema Zod correspondente antes de sair — se o
+formato vindo da D&D API não bater com o schema, a rota responde com erro em
+vez de devolver dado não validado.
+
+O CORS em `src/app.ts` só libera `http://localhost:5500` e
+`http://127.0.0.1:5500` (onde o Live Server do front roda em dev). Se você
+rodar o front noutra porta, precisa atualizar essa lista.
+
+Para conferir se os tipos estão corretos:
+
+```bash
+npx tsc --noEmit
+```
+
+Para rodar um script isolado (ex: `seed.ts`, que **não** faz parte do
+servidor — é um script avulso de popular dados, não algo que fica no ar):
+
+```bash
+npx ts-node seed.ts
+```
+
+## Scripts do backend
+
+| Comando | Situação |
 | --- | --- |
-| `npm run dev` | roda a API com reload automático (nodemon + ts-node) |
-| `npm run build` | compila o TypeScript para `dist/` |
-| `npm start` | roda a versão já compilada (uso "produção") |
+| `npx tsc --noEmit` | ✅ checa os tipos |
+| `npm run build` | ✅ compila para `dist/` |
+| `npm run dev` | ✅ nodemon + ts-node `src/server.ts` → `http://localhost:3000` |
+| `npm start` | ✅ `node dist/server.js` (rodar depois de `npm run build`) |
 
-**Frontend** (`frontend/`):
+## Próximos passos
 
-| Comando | O que faz |
-| --- | --- |
-| `npm run dev` | sobe o servidor de desenvolvimento do Vite |
-| `npm run build` | gera o build de produção |
-| `npm run lint` | roda o ESLint |
-| `npm run preview` | serve localmente o build de produção |
+O checklist completo está em [`backend/to-do/todo.md`](backend/to-do/todo.md).
+Em resumo:
+
+1. terminar o `seed.ts` (tratamento de erros e validação com Zod, hoje só as
+   rotas em `src/routes/` fazem essa validação);
+2. subir SQLite e ligar o backend a ele, pra parar de bater na D&D API a cada
+   requisição;
+3. modelar personagem, build, cartas e decks;
+4. gerador de cartas a partir dos dados da D&D API;
+5. integrar de verdade com o frontend (fetch, botões, estado do jogo).
+
+## Segurança
+
+- Nunca commite segredos: senhas, tokens ou strings de conexão de banco devem
+  ficar fora do git.
+- O `.env` está no `.gitignore` e hoje só guarda a URL pública da D&D API.
+- Os dados vindos da API externa são validados com Zod antes de serem
+  devolvidos pelas rotas.
+- CORS com origem explícita (nunca `*`), limite de tamanho de body
+  (`express.json({ limit: "100kb" })`) e error handler que nunca expõe stack
+  trace ao cliente.
 
 ## Documentação extra
 
-Tem mais detalhes espalhados pelo repositório, caso queira se aprofundar:
+Em `backend/to-do/documentation/`:
 
-- `backend/architecture.md` — mapa de pastas da arquitetura em camadas do backend
-- `backend/Documentation/quickstart.md` — outro guia rápido de como rodar tudo
-- `backend/Documentation/documentation.md` — notas sobre a migração da API
-  para Zod + TypeScript
-- `frontend/documentation/D&D5e_docs.md` — anotações sobre os endpoints da
-  D&D 5e API
+- `Mapa dos Dados de D&D5e.md` — shape das respostas de cada categoria da API
+- `dnd5e-api-mapping.md` e `dnd_api_requests.json` — notas e exemplos de requisições
+- `quickstart.md` e `documentation.md` — guias da versão anterior (podem estar defasados)
+- `codigo-referencia-antigo.md` — código arquivado do CRUD de `/cards`, base pro esqueleto atual de `src/`
 
-## Onde o projeto está e para onde vai
-
-Este é um projeto vivo de aprendizado, então tem partes ainda em construção
-de propósito:
-
-- alguns componentes do frontend (`Header`, `MonsterCard`, `Button`) ainda
-  têm conteúdo fixo/placeholder;
-- o backend ainda guarda os dados em memória — `seed.ts` e `database.db`
-  estão reservados para quando a persistência entrar em cena;
-- frontend e backend ainda não estão ligados um ao outro.
-
-Se você quiser contribuir ou continuar o projeto, esses são ótimos pontos de
-partida. Bom código! ✨
+Em `backend/testes/README.md`: nota sobre por que `app.ts`/`server.ts` são
+separados e como isso vai ser usado quando testes automatizados entrarem.

@@ -4,154 +4,169 @@ Guia de contexto para quem (humano ou Claude Code) for trabalhar neste repositó
 
 ## O que é este projeto
 
-**RPGCardGame** é um projeto de estudo: um jogo de cartas de RPG inspirado em D&D 5e.
-O objetivo principal é aprender, na prática, React + Vite no frontend e Node.js +
-TypeScript + Express no backend, além de consumir a API pública [D&D 5e API](https://www.dnd5eapi.co/).
+**RPGCardGame** é um projeto de estudo (MVP de uma disciplina): um jogo de cartas
+de RPG inspirado em D&D 5e. O objetivo é praticar modelagem de dados, gerenciamento
+de estado, depuração, design de fronteiras e raciocínio assíncrono, consumindo a API
+pública [D&D 5e API](https://www.dnd5eapi.co/). O requerimento oficial está em
+`backend/to-do/documentation/Requerimento_MVP.pdf`.
 
-Por ser um projeto de aprendizado, o código tem comentários explicativos (em
-português) sobre *por que* certas escolhas foram feitas — isso é intencional e
-deve ser preservado/seguido ao editar esses arquivos.
+**Regra da disciplina: pelo menos 50% do código precisa ser escrito pela própria
+autora.** Por isso o repositório passou por uma faxina (commit `796594d`) que
+removeu a arquitetura em camadas que já estava montada. Ao ajudar aqui, prefira
+explicar, revisar e apontar caminhos em vez de entregar implementações completas
+— a menos que seja pedido explicitamente.
 
-## Estrutura do repositório
+Os comentários do código são em português e têm propósito didático (explicam
+*por que* de cada escolha). Preserve esse tom ao editar.
 
-O backend segue a **arquitetura em camadas (layered architecture)** padrão de
-mercado para APIs Express: `routes → controllers → services → repositories`,
-com `schemas` (Zod) como fonte única de verdade e `docs` para a geração do
-OpenAPI/Swagger. Ver o mapa completo em [`backend/architecture.md`](backend/architecture.md).
+## Estado atual do repositório
+
+- **Há um servidor Express mínimo rodando** em `backend/src/` (`app.ts` +
+  `server.ts` + `routes/`). Ele expõe `GET /<entidade>` e `GET /<entidade>/:index`
+  para as 24 categorias da D&D API modeladas em `entidades-dnd/schemas/`,
+  validando cada resposta com o schema Zod correspondente antes de devolver.
+  `npm run dev`/`npm start` já funcionam.
+- **Ainda não há banco de dados.** Cada requisição às rotas acima bate direto
+  na D&D API por trás — não tem cache nem persistência ainda. O plano
+  (SQLite, não mais Postgres) está em `backend/to-do/todo.md`.
+- **O frontend saiu deste repositório** e vive em repo próprio
+  (`RPGCardGame-frontend`, HTML/CSS/JS puro, sem bundler, servido em dev pela
+  extensão Live Server do VS Code em `localhost:5500`/`127.0.0.1:5500`). A
+  pasta `frontend/` aqui contém só um `node_modules` residual; ignore-a.
+- O código de CRUD antigo (`/cards` em memória com Zod + Swagger) está
+  arquivado como referência de consulta em
+  `backend/to-do/documentation/codigo-referencia-antigo.md` — não é código
+  vivo, mas foi a base pra reconstruir o esqueleto Express em `src/`.
+
+## Estrutura
 
 ```
 RPGCardGame/
+├── package.json / package-lock.json   # dependência raiz "card-factory" (a confirmar a origem)
 ├── backend/
 │   ├── src/
-│   │   ├── server.ts                # ponto de entrada, só sobe o servidor HTTP
-│   │   ├── app.ts                   # monta o Express (middlewares, rotas, /docs)
-│   │   ├── routes/
-│   │   │   └── card.routes.ts       # mapeia URL + método HTTP -> controller
-│   │   ├── controllers/
-│   │   │   └── card.controller.ts   # req/res, sem regra de negócio
-│   │   ├── services/
-│   │   │   └── card.service.ts      # regra de negócio das cartas
-│   │   ├── repositories/
-│   │   │   └── card.repository.ts   # acesso a dados (hoje: array em memória)
-│   │   ├── schemas/
-│   │   │   └── card.schema.ts       # Zod: validação + tipos + base p/ OpenAPI
-│   │   ├── middlewares/
-│   │   │   └── validateBody.ts      # valida req.body contra um schema Zod
-│   │   └── docs/
-│   │       └── openapi.ts           # registra as rotas no OpenAPI a partir dos schemas Zod
-│   ├── seed.ts                 # (vazio) reservado para popular um banco de dados
-│   ├── app.py                  # script Python de exemplo, consulta a D&D 5e API
-│   ├── database.db             # (vazio) reservado para uma futura persistência em SQLite
-│   ├── bin/dnd_race_search.sh  # script bash interativo p/ buscar raças na D&D 5e API
-│   ├── .env                    # DND_BASE_URL
-│   ├── architecture.md         # mapa de arquitetura em camadas do backend
-│   ├── tsconfig.json
-│   ├── package.json
-│   └── Documentation/
-│       ├── documentation.md   # changelog/notas da migração para Zod + TS
-│       ├── quickstart.md      # como rodar frontend + backend em paralelo
-│       └── dnd_api_requests.json
-└── frontend/
-    ├── index.html
-    ├── vite.config.js
-    ├── eslint.config.js
-    ├── package.json
-    ├── documentation/D&D5e_docs.md   # notas sobre os endpoints da D&D 5e API
-    └── src/
-        ├── main.jsx
-        ├── App.jsx
-        ├── index.css
-        ├── assets/pfp.jpg
-        └── components/
-            ├── Header.jsx          # navbar estática (links ainda são "#")
-            ├── Footer.jsx
-            ├── Button.jsx          # botão de exemplo, não usado no App ainda
-            ├── Profile.tsx         # cartão de perfil estático
-            ├── MonsterCard.jsx     # cartão de monstro estático (placeholder)
-            └── MonsterSearch.tsx   # busca de monstro, chama a D&D 5e API direto
+│   │   ├── app.ts             # Express: CORS, body limit, rotas, error handler (não sobe servidor)
+│   │   ├── server.ts          # só importa app.ts e liga na porta 3000
+│   │   └── routes/
+│   │       ├── entityRouter.ts  # fábrica genérica: GET / e GET /:index pra qualquer entidade
+│   │       └── index.ts         # registra as 24 entidades nessa fábrica
+│   ├── testes/
+│   │   └── README.md          # notas sobre testabilidade (app.ts/server.ts), sem testes de verdade ainda
+│   ├── seed.ts                # funções axios que consultam a D&D API (spells) + todos de modelagem
+│   ├── dado/
+│   │   └── d20.ts             # rolagem de d20
+│   ├── personagem/
+│   │   └── interface_personagem.ts   # interface Personagem (esboço)
+│   ├── entidades-dnd/
+│   │   ├── dnd-api-client.ts  # fetchFromDndApi<T>(path): cliente axios genérico
+│   │   └── schemas/*.schema.ts # um schema Zod por categoria da D&D API (spells, monsters, classes...)
+│   ├── auth/
+│   │   └── auth.js            # esboço não funcional (sintaxe mista JS/Python) — não confirmar com autora
+│   ├── to-do/
+│   │   ├── todo.md            # checklist de próximos passos
+│   │   ├── Requerimento_MVP.pdf
+│   │   └── documentation/     # mapas da API, quickstart, código de referência antigo
+│   ├── .env                   # DND_BASE_URL (URL pública, sem segredos)
+│   ├── tsconfig.json          # rootDir "." e include "**/*.ts" (sem pasta src/ única — src/ é só o servidor)
+│   └── package.json
 ```
 
 ## Stack
 
-**Frontend**: React 19 + Vite 8, ESLint. Sem TypeScript "puro" ainda — mistura
-`.jsx` e `.tsx` (migração em andamento). Sem roteador nem gerenciador de estado
-global.
-
-**Backend**: Express 5 + TypeScript, organizado em arquitetura em camadas
-(`routes` → `controllers` → `services` → `repositories`), com validação e
-documentação via [Zod](https://zod.dev/) + `@asteasolutions/zod-to-openapi`
-(gera OpenAPI a partir dos mesmos schemas Zod — ver `backend/src/schemas/` e
-`backend/src/docs/openapi.ts`), Swagger UI em `/docs`. Os dados de `cards`
-hoje vivem só em memória (`backend/src/repositories/card.repository.ts`); não
-há banco de dados conectado ainda, embora `database.db` e `seed.ts` existam
-como placeholders para isso.
-
-**Scripts auxiliares**: `backend/app.py` (Python + `requests` + `dotenv`) e
-`backend/bin/dnd_race_search.sh` (bash + `curl`) são exemplos avulsos de como
-consultar a D&D 5e API, não fazem parte do fluxo do servidor Express.
+- **Backend**: Node.js + TypeScript (strict), `express` 5, `cors`, `axios`,
+  `zod` 4. Dependências de Swagger e `zod-to-openapi` continuam no
+  `package.json`, mas hoje nada as usa (sobra do código arquivado; reservadas
+  para quando a documentação interativa entrar, provavelmente perto da
+  entrega/vídeo).
+- **Frontend**: fora deste repo.
+- **D&D API**: REST sem autenticação, base `DND_BASE_URL` + `/api/2014/...`.
 
 ## Comandos
 
-```bash
-# Backend (dentro de backend/)
-npm run dev     # nodemon + ts-node, roda src/server.ts com reload automático
-npm run build   # compila src/ para dist/ (tsc)
-npm start       # roda a versão compilada (dist/server.js)
+Dentro de `backend/`:
 
-# Frontend (dentro de frontend/)
-npm run dev      # vite dev server, http://localhost:5173
-npm run build    # build de produção
-npm run lint     # eslint
-npm run preview  # preview do build
+```bash
+npx tsc --noEmit   # checa os tipos sem gerar arquivos
+npm run build      # tsc -> dist/
+npm run dev        # nodemon + ts-node src/server.ts -> http://localhost:3000
+npm start          # node dist/server.js (rodar depois de npm run build)
 ```
 
-Para desenvolver os dois lados juntos, use dois terminais (um em `backend/`,
-outro em `frontend/`) — ver `backend/Documentation/quickstart.md`.
+Para rodar um arquivo isolado (ex: `seed.ts`, que não faz parte do servidor —
+é um script avulso, ver seção "Convenções"), use `npx ts-node <arquivo>`.
 
-O backend expõe a API CRUD de cartas em `http://localhost:3000/cards` e a
-documentação interativa (Swagger) em `http://localhost:3000/docs`.
+## Variáveis de ambiente e segurança
 
-## Variáveis de ambiente
-
-`backend/.env` define `DND_BASE_URL` (usada por `app.py`). Não contém
-segredos — é só a URL base pública da D&D 5e API. Ainda assim, trate `.env`
-como configuração local: não adicione segredos reais nele sem atualizar
-`.gitignore` primeiro.
+- `backend/.env` define só `DND_BASE_URL` (URL pública da D&D API). É lido com
+  `process.loadEnvFile()` em `seed.ts` e `entidades-dnd/dnd-api-client.ts`.
+- **Não adicione variáveis novas ao `.env` sem pedido explícito.** Quando a etapa
+  do SQLite chegar, credenciais/caminho de banco não podem ir para o git sem
+  confirmar antes.
+- `.env` está no `.gitignore`, mas **já foi commitado** antes disso, então
+  continua rastreado. Enquanto não for removido do índice
+  (`git rm --cached backend/.env`), qualquer edição nele vai parar no
+  histórico. Nunca coloque segredos reais nele.
+- Nunca imprima, cole em documentação ou commite valores de `.env`, tokens,
+  senhas ou strings de conexão. Em docs, use placeholders.
+- Valide com Zod tudo que vem de fora (respostas da D&D API, `req.body`) antes de
+  usar. Não interpole entrada de usuário em caminhos de URL sem
+  `encodeURIComponent` — em `seed.ts`, `getSpellByName`/`getSpellByIndex` montam
+  a URL com o valor cru (ainda não corrigido ali; as rotas em
+  `src/routes/entityRouter.ts` já aplicam `encodeURIComponent` no `:index`
+  antes de repassar pro cliente axios, porque são elas que expõem esse valor
+  publicamente por HTTP).
+- CORS em `src/app.ts` usa `origin` explícito (lista fixa com as URLs do Live
+  Server) — nunca `origin: "*"`/`true`. Se a URL do front mudar, atualize essa
+  lista.
+- Ao adicionar dependências, confira nome e origem do pacote (risco de
+  typosquatting) e rode `npm audit`.
+- O error handler central em `src/app.ts` nunca expõe stack trace ao cliente
+  (responde só `{ error: "Erro interno do servidor" }` e loga o resto no
+  console do servidor).
 
 ## Convenções e pontos de atenção
 
-- **Comentários em português, com propósito didático**: mantenha esse tom ao
-  editar os arquivos em `backend/src/`, `app.py` e os arquivos em
-  `Documentation/`. Não são "ruído" a remover — fazem parte do propósito do
-  projeto.
-- **Zod como fonte única de verdade** no backend: um schema Zod (em
-  `backend/src/schemas/`) define validação, tipo TypeScript (`z.infer`) e
-  documentação OpenAPI ao mesmo tempo. Ao adicionar uma rota nova, siga o
-  fluxo em camadas já estabelecido — `schema → repository → service →
-  controller → route → registro em docs/openapi.ts` — em vez de duplicar
-  validação manual ou misturar responsabilidades num único arquivo.
-- **Frontend e backend ainda não estão integrados**: `MonsterSearch.tsx`
-  chama a D&D 5e API diretamente do navegador; o CRUD de `/cards` do backend
-  não é consumido pelo frontend ainda. Isso é esperado no estado atual do
-  projeto — não assuma que existe uma ligação entre eles a menos que seja
-  isso que está sendo implementado.
-- **Vários pontos são placeholders intencionais**: `Header.jsx` tem links
-  `href="#"`, `MonsterCard.jsx` tem conteúdo fixo ("Monster Name"),
-  `Button.jsx` não é usado em `App.jsx`, `seed.ts` e `database.db` estão
-  vazios. Antes de "corrigir" algo assim, confirme se não é só uma etapa
-  futura ainda não implementada.
-- **Sem testes automatizados** hoje (`npm test` no backend só imprime um
-  erro proposital). Se adicionar lógica não trivial, vale propor testes, mas
-  não é um padrão já estabelecido no projeto.
+- **Zod como fonte única de verdade**: um schema Zod define validação e tipo
+  TypeScript (`z.infer`). Os schemas em `entidades-dnd/schemas/` seguem isso,
+  e cada um exporta o mesmo par de funções assíncronas (`getXList`,
+  `getXByIndex`) — é esse padrão uniforme que permite a fábrica genérica em
+  `src/routes/entityRouter.ts` (uma implementação só, reaproveitada pelas 24
+  entidades, em vez de 24 arquivos de rota quase idênticos).
+- **`app.ts` e `server.ts` ficam separados de propósito**: `app.ts` monta o
+  Express (middlewares, rotas, error handler) e exporta o `app` sem chamar
+  `.listen()`; `server.ts` só importa esse `app` e liga na porta. Isso permite
+  testar/importar `app` (ex: com `supertest`) sem subir um servidor de
+  verdade — ver `backend/testes/README.md`.
+- **`seed.ts` não é parte do servidor**: é um script de execução única/sob
+  demanda (`npx ts-node seed.ts`), não algo que fica rodando. Quando o SQLite
+  entrar, ele vira o script que popula o banco a partir da D&D API; o
+  servidor passa a ler do banco em vez de bater na API a cada request. Não
+  confundir com `dist/seed.js`, que é só o `seed.ts` compilado (saída de
+  `npm run build`, não é código-fonte separado).
+- **Estruturas por domínio**, na raiz do backend (`dado/`, `personagem/`,
+  `entidades-dnd/`), fora de `src/`, que é reservado só pro servidor HTTP.
+- **Vários pontos são esboços intencionais**: `criarPersonagem` lança
+  "Implementar criação do personagem", `seed.ts` tem `todo`s de modelagem e
+  ainda não valida com Zod nem grava em banco, `getSpellByName` e
+  `getSpellByIndex` em `seed.ts` hoje fazem a mesma requisição, `auth/auth.js`
+  é um esboço não funcional. Confirme com a autora antes de "corrigir".
+- **Sem testes automatizados.** `npm test` só imprime um erro proposital.
+  `backend/testes/README.md` guarda a justificativa de design pra quando isso
+  entrar, mas não tem teste de verdade escrito ainda.
+- Arquivos ainda não totalmente integrados: `auth/auth.js` (esboço solto, sem
+  rota conectada a ele) e `seed.ts` (funções soltas, não usadas pelas rotas de
+  `src/routes/` — essas leem direto de `entidades-dnd/schemas/`).
 
 ## Ao usar Claude Code neste repo
 
-- Prefira mudanças pequenas e coerentes com o estágio de aprendizado do
-  projeto — evite introduzir abstrações "de produção" (DI containers, camadas
-  extras, etc.) sem que isso tenha sido pedido.
-- Ao mexer no backend, rode `npm run build` (tsc) em `backend/` para
-  confirmar que os tipos continuam batendo.
-- Ao mexer no frontend, rode `npm run lint` em `frontend/`.
-- Este repositório não tem suíte de testes para validar comportamento — ao
-  fazer mudanças, descreva no resumo final o que foi testado manualmente
-  (ex: rodou `npm run dev` e checou no navegador) em vez de assumir sucesso.
+- Mudanças pequenas, coerentes com o estágio de aprendizado; nada de abstrações
+  "de produção" (DI, camadas extras) sem pedido. A fábrica de rotas em
+  `entityRouter.ts` é a exceção justificada: 24 entidades com o mesmo formato
+  exato, não uma abstração especulativa.
+- Respeite a regra dos 50% de código próprio (ver acima).
+- Ao mexer no backend, rode `npx tsc --noEmit` em `backend/`.
+- Não há suíte de testes: no resumo final, descreva o que foi verificado
+  manualmente (ex: subir o servidor com `ts-node` e testar rotas com `curl`)
+  em vez de assumir sucesso.
+- Antes de commitar, confira `git status`/`git diff` para não incluir `.env`,
+  `node_modules` ou `dist`.

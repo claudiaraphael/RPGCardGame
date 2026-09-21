@@ -25,22 +25,62 @@ if (!dnd_url) {
     throw new Error("DND_BASE_URL não esta definida");
 }
 
+/**
+ * API ENDPOINTS PARA OS SPELLS
+ * Funcoes assíncronas que fazem requisições HTTP para a API de D&D usando axios.
+ * Cada função retorna os dados da resposta da API ou undefined em caso de erro.
+ * As funções são:
+ *   
+ * **SPELLS**
+ * getSpellByIndex(index: string): Promise<any>  
+ * getSpellByName(name: string): Promise<any>  
+ * getSpellByLevel(level: number): Promise<any>  
+ * getAllSpells(): Promise<any>
+ * 
+ * **MONSTERS**
+ * getMonsterByIndex(index: string): Promise<any>  
+ * getMonsterByName(name: string): Promise<any>
+ * get monster by outros elementos que estiverem no objeto que vier da api
+ */
 
-// EM PYTHON SERIA ASSIM
-@app.post("/api/criar_personagem", method=["POST"])
+export async function getSpellByIndex(index: string) {
+    try {
+        const response = await axios.get(dnd_url + "/api/2014/spells/" + index)
+        return response.data
+    } catch (error) {
+        if (error instanceof Error) {
+            console.log('Erro ao buscar dados da D&D API:', error.message);
+        } else {
+            console.log('Erro desconhecido ao buscar dados da D&D API');
+        }
+    }
+}
 
-// em TS/JS é assim
+export async function getSpellByName(name: string) {
+    try {
+        const response = await axios.get(dnd_url + "/api/2014/spells/" + name)
+        return response.data
+    } catch (error) {
+        if (error instanceof Error) {
+            console.log('Erro ao buscar dados da D&D API:', error.message);
+        } else {
+            console.log('Erro desconhecido ao buscar dados da D&D API');
+        }
+    }
+}
 
-
-
-
-
-
-
-
-
-
-
+export async function getSpellByLevel(level: number) {
+    try {
+        const response = await axios.get(dnd_url + "/api/2014/spells?level=" + level)
+        return response.data
+    } catch (error) {
+        if (error instanceof Error) {
+            console.log('Erro ao buscar dados da D&D API:', error.message);
+        } else {
+            console.log('Erro desconhecido ao buscar dados da D&D API');
+        }
+    }
+}
 
 export async function getAllSpells() {
     try {

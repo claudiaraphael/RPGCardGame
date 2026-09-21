@@ -1,5 +1,6 @@
 interface Personagem {
-    id: string;
+    id: number;
+    index: string;
     nome: string;
     hp: number;
     mp: number;
