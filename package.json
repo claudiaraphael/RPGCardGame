@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "argon2": "^0.45.1",
     "card-factory": "^1.0.14"
   }
 }
