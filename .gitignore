@@ -27,3 +27,8 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Banco SQLite local (gerado em runtime a partir de db/schema.ts + seed.ts)
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
