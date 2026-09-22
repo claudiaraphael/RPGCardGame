@@ -64,6 +64,26 @@ Os comentários do código são em português e têm propósito didático (expli
   Confirmar com a autora antes de assumir que ele está num repositório
   público de verdade (exigência do requerimento).
 
+## Update: dockerização (em andamento, retomar amanhã)
+
+- **Escritos, mas NÃO buildados nem testados** (Docker Desktop estava
+  desligado): `backend/Dockerfile` + `backend/.dockerignore` (build em 2
+  estágios, `node:24-bookworm-slim`) e `Dockerfile` + `.dockerignore` no
+  repo do front (nginx:alpine servindo estáticos; fica fora deste repo).
+- **Decisões não óbvias do backend** (verificar no primeiro build):
+  - `RUN touch .env`: `process.loadEnvFile()` (em `auth/` e
+    `entidades-dnd/`) lança erro se o arquivo não existe; `.env` real não
+    vai pra imagem, as variáveis entram via `--env-file`.
+  - `db/connection.ts` grava em `dist/database.sqlite`; o Dockerfile faz
+    esse caminho ser um symlink pra `/data/database.sqlite` (volume).
+    Ponto mais frágil — confirmar que o SQLite (WAL) funciona via symlink.
+  - `CMD ["node", "dist/src/server.js"]`: o `dist/` local está velho, o
+    caminho só se confirma no build.
+- **Próximos passos**: subir o Docker Desktop, buildar as duas imagens,
+  testar `curl localhost:3000/spells`, rodar o seed no container, e
+  confirmar o CORS com o front em `:5500`. Comandos no README
+  ("Docker (guia rápido)"). Sem `docker-compose` por enquanto.
+
 ## Bugs já encontrados e corrigidos (via validação contra dado real)
 
 Vale registrar como exemplo de depuração sistemática (skill central do

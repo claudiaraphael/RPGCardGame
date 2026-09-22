@@ -129,6 +129,53 @@ Busca a entidade na D&D API, valida cada item e grava em `dnd_cache`
 uma chamada a mais em `db/runSeed.ts`, reaproveitando o mesmo par
 `getXList`/`getXByIndex` que já existe em `entidades-dnd/schemas/`.
 
+## Docker (guia rápido — caminho feliz)
+
+> ⚠️ **Status:** os Dockerfiles foram escritos mas **ainda não foram
+> buildados nem testados** (o Docker Desktop estava desligado). Se algum
+> passo abaixo falhar, é esperado ajustar — anote o erro.
+
+Pré-requisito: Docker Desktop **aberto e rodando**.
+
+**Variáveis de ambiente** — o `.env` real não vai pro git nem pra imagem, então
+quem for rodar precisa criar o próprio. Em `backend/`:
+
+```bash
+cp .env.example .env
+```
+
+| Variável       | O que é                                                | Valor                                                                 |
+| -------------- | ------------------------------------------------------ | --------------------------------------------------------------------- |
+| `DND_BASE_URL` | URL pública da D&D API (sem autenticação)              | `https://www.dnd5eapi.co` (já vem certo no `.env.example`)            |
+| `JWT_SECRET`   | Segredo que assina os tokens de login (JWT)            | Qualquer string longa e aleatória — **troque** o placeholder do exemplo |
+
+Pra gerar um `JWT_SECRET` decente:
+`node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`.
+Só essas duas variáveis são necessárias; nenhuma chave de API externa.
+
+**Backend** (dentro de `backend/`, com o `.env` acima pronto):
+
+```bash
+docker build -t rpgcardgame-backend .
+docker run --env-file .env -p 3000:3000 -v rpg-data:/data rpgcardgame-backend
+```
+
+Teste: `curl http://localhost:3000/spells`. O banco SQLite fica no volume
+`rpg-data` (sobrevive a recriar o container). Pra popular o cache dentro do
+container em execução:
+`docker exec <container> node dist/db/runSeed.js`.
+
+**Frontend** (dentro do repo do front, que tem o próprio `Dockerfile` com
+nginx servindo os arquivos estáticos):
+
+```bash
+docker build -t rpgcardgame-frontend .
+docker run -p 5500:80 rpgcardgame-frontend
+```
+
+Abra `http://localhost:5500`. A porta **5500** importa: o CORS do backend só
+libera `localhost:5500` e `127.0.0.1:5500`.
+
 ## Checando os tipos
 
 ```bash
