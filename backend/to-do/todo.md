@@ -1,5 +1,10 @@
 # TODO — RPGCardGame (Roadmap Scrum)
 
+1. criar uma chamada pra alguma api externa pra chamar dados ao vivo. (pensei cartas com personagens da campanha) // to-do
+
+a chamada traz um personagem da campanha conforme o algoritmo que pode ser aleatorio | pegar carta de personagens coringas, novas dinamicas | story-mode
+
+
 **Prazo:** entrega até 27/set às 00h. Início em 18/set. Trabalho solo.
 **Regra:** pelo menos 50% do código feito à mão. Marcação: 🖐 = você, 🤖 = Claude, 🤝 = dividido.
 **Referência dos requisitos:** `Requerimento_MVP.pdf` (mesma pasta).

@@ -7,6 +7,12 @@
 // aqui é só repetir o mesmo par getXList/getXByIndex de cada
 // entidades-dnd/schemas/<entidade>.schema.ts — mesma lista de imports já
 // usada em src/routes/index.ts.
+//
+// Cada entidade passa por try/catch aqui fora, além do retry por item já
+// dentro de seedEntity() (db/seedDndCache.ts). Sem isso, se a LISTA de uma
+// única entidade falhasse (não um item, a lista inteira — ver comentário
+// em seedDndCache.ts), o erro subia sem ser pego e o script parava ali,
+// nunca chegando nas entidades seguintes nem no db.close() final.
 
 import { seedEntity } from "./seedDndCache";
 import { db } from "./connection";
@@ -36,33 +42,54 @@ import { getSubraceList, getSubraceByIndex } from "../entidades-dnd/schemas/subr
 import { getTraitList, getTraitByIndex } from "../entidades-dnd/schemas/traits.schema";
 import { getWeaponPropertyList, getWeaponPropertyByIndex } from "../entidades-dnd/schemas/weapon-properties.schema";
 
+const entidades: [string, () => Promise<{ index: string }[]>, (i: string) => Promise<unknown>][] = [
+  ["ability-scores", getAbilityScoreList, getAbilityScoreByIndex],
+  ["alignments", getAlignmentList, getAlignmentByIndex],
+  ["backgrounds", getBackgroundList, getBackgroundByIndex],
+  ["classes", getClassList, getClassByIndex],
+  ["conditions", getConditionList, getConditionByIndex],
+  ["damage-types", getDamageTypeList, getDamageTypeByIndex],
+  ["equipment", getEquipmentList, getEquipmentByIndex],
+  ["equipment-categories", getEquipmentCategoryList, getEquipmentCategoryByIndex],
+  ["feats", getFeatList, getFeatByIndex],
+  ["features", getFeatureList, getFeatureByIndex],
+  ["languages", getLanguageList, getLanguageByIndex],
+  ["magic-items", getMagicItemList, getMagicItemByIndex],
+  ["magic-schools", getMagicSchoolList, getMagicSchoolByIndex],
+  ["monsters", getMonsterList, getMonsterByIndex],
+  ["proficiencies", getProficiencyList, getProficiencyByIndex],
+  ["races", getRaceList, getRaceByIndex],
+  ["rule-sections", getRuleSectionList, getRuleSectionByIndex],
+  ["rules", getRuleList, getRuleByIndex],
+  ["skills", getSkillList, getSkillByIndex],
+  ["spells", getSpellList, getSpellByIndex],
+  ["subclasses", getSubclassList, getSubclassByIndex],
+  ["subraces", getSubraceList, getSubraceByIndex],
+  ["traits", getTraitList, getTraitByIndex],
+  ["weapon-properties", getWeaponPropertyList, getWeaponPropertyByIndex],
+];
+
 async function main() {
-  await seedEntity("ability-scores", getAbilityScoreList, getAbilityScoreByIndex);
-  await seedEntity("alignments", getAlignmentList, getAlignmentByIndex);
-  await seedEntity("backgrounds", getBackgroundList, getBackgroundByIndex);
-  await seedEntity("classes", getClassList, getClassByIndex);
-  await seedEntity("conditions", getConditionList, getConditionByIndex);
-  await seedEntity("damage-types", getDamageTypeList, getDamageTypeByIndex);
-  await seedEntity("equipment", getEquipmentList, getEquipmentByIndex);
-  await seedEntity("equipment-categories", getEquipmentCategoryList, getEquipmentCategoryByIndex);
-  await seedEntity("feats", getFeatList, getFeatByIndex);
-  await seedEntity("features", getFeatureList, getFeatureByIndex);
-  await seedEntity("languages", getLanguageList, getLanguageByIndex);
-  await seedEntity("magic-items", getMagicItemList, getMagicItemByIndex);
-  await seedEntity("magic-schools", getMagicSchoolList, getMagicSchoolByIndex);
-  await seedEntity("monsters", getMonsterList, getMonsterByIndex);
-  await seedEntity("proficiencies", getProficiencyList, getProficiencyByIndex);
-  await seedEntity("races", getRaceList, getRaceByIndex);
-  await seedEntity("rule-sections", getRuleSectionList, getRuleSectionByIndex);
-  await seedEntity("rules", getRuleList, getRuleByIndex);
-  await seedEntity("skills", getSkillList, getSkillByIndex);
-  await seedEntity("spells", getSpellList, getSpellByIndex);
-  await seedEntity("subclasses", getSubclassList, getSubclassByIndex);
-  await seedEntity("subraces", getSubraceList, getSubraceByIndex);
-  await seedEntity("traits", getTraitList, getTraitByIndex);
-  await seedEntity("weapon-properties", getWeaponPropertyList, getWeaponPropertyByIndex);
+  const entidadesComFalhaTotal: string[] = [];
+
+  for (const [nome, getList, getByIndex] of entidades) {
+    try {
+      await seedEntity(nome, getList, getByIndex);
+    } catch (err) {
+      // A LISTA inteira da entidade falhou (não um item — isso o
+      // seedEntity já trata sozinho). Registra e segue pra próxima em vez
+      // de derrubar o script inteiro.
+      entidadesComFalhaTotal.push(nome);
+      console.error(`[${nome}] pulada — lista falhou mesmo com retry:`, (err as Error).message);
+    }
+  }
 
   db.close();
+
+  if (entidadesComFalhaTotal.length > 0) {
+    console.error(`\nEntidades não seedadas: ${entidadesComFalhaTotal.join(", ")}`);
+    process.exitCode = 1;
+  }
 }
 
 main();

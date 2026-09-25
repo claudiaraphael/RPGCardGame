@@ -13,9 +13,11 @@ The beautiful part to this is when you're adding new features you very very rare
 source: https://www.reddit.com/r/gamedev/comments/tg9ffl/how_do_you_manage_game_state_for_browserbased/
 */
 
+let STATES = ["START", "SAVE", "PAUSE", "REPLAY"]
 
 const class Game {
-
+    cperwvk = "smdqwq";
+}
     
 
 
