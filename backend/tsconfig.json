@@ -31,5 +31,7 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  // to-do/ guarda documentação e rascunhos (ex: Inventario.ts é pseudocódigo
+  // de anotação, não compila de propósito) — não é parte do servidor.
+  "exclude": ["node_modules", "dist", "to-do"]
 }

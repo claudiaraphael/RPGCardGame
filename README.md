@@ -7,6 +7,13 @@ modelagem de dados, gerenciamento de estado, depuração sistemática, design
 de fronteiras arquiteturais e raciocínio assíncrono — skills que ferramentas
 de IA não substituem, só apoiam.
 
+> **RPGCardGame é conteúdo de fã não oficial (unofficial Fan Content), sem
+> qualquer afiliação com a Wizards of the Coast.** Feito em conformidade com
+> a [Fan Content Policy](https://company.wizards.com/en/legal/fancontentpolicy)
+> da Wizards of the Coast. Não usa nenhuma logo/marca da Wizards of the Coast,
+> não é vendido nem licenciado a terceiros, e a mecânica de D&D 5e usada vem
+> do [SRD](https://www.dnd5eapi.co/) sob Open Game Content.
+
 ## O que já funciona
 
 - ✅ **API REST completa para as 24 categorias da D&D API** (spells,

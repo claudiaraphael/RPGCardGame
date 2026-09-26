@@ -32,3 +32,12 @@ dist-ssr
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+
+# Docker: Dockerfile/.dockerignore/compose.yaml reais serão gerados por
+# `docker init` e variam por ambiente — não versionar. O conteúdo de
+# referência atual (escrito antes do docker init) fica preservado e
+# versionado em backend/docker.exemple/.
+backend/Dockerfile
+backend/.dockerignore
+backend/compose.yaml
+backend/docker-compose.yml
