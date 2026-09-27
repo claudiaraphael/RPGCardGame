@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    background: rgb(216, 225, 192);
+    margin: 0;
+    padding: 0;
+}
+div {
+    color:rgb(0, 140, 255);
+}
+
+#container {
+    background: rgb(219, 229, 171);
+    border: 1px solid rgb(0, 140, 255);
+    border-radius: 16px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.character {
+    background: rgb(219, 229, 171);
+    border: 1px solid rgb(0, 140, 255);
+    padding: 10px;
+    margin: 10px;
+}
+
+#auth-section,
+#area-logada {
+    background: rgb(219, 229, 171);
+    border: 1px solid rgb(0, 140, 255);
+    border-radius: 16px;
+    padding: 10px;
+    margin: 10px;
+}
+
+#form-login,
+#form-registro,
+#form-personagem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 320px;
+    margin-bottom: 12px;
+}
+
+#lista-personagens {
+    list-style: none;
+    padding: 0;
+}
+
+#lista-personagens li {
+    background: rgb(216, 225, 192);
+    border: 1px solid rgb(0, 140, 255);
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 6px;
+}
+
+#angel {
+    width: 390px;
+    height: 500px;
+    background: rgb(219, 229, 171);
+    border-radius: 16px;
+    padding: 10px;
+    margin: 10px auto;
+    align-items: center;
+
+}
+
+#bird {
+    width: 430px;
+    height: 450px;
+    background: rgb(219, 229, 171);
+    border-radius: 16px;
+    padding: 10px;
+    margin: 10px auto;
+    align-items: center;
+
+}
+
+#moogle {
+    width: 400px;
+    height: 500px;
+    background: rgb(219, 229, 171);
+    border-radius: 16px;
+    padding: 10px;
+    margin: 10px auto;
+    align-items: center;
+}

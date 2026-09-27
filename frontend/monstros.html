@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="monstros.css">
+    <title>Índice de Monstros — RPG Card Game</title>
+</head>
+<body>
+    <div id="container">
+        <h1>Índice de Monstros</h1>
+        <p>Dados consultados direto na D&#38;D 5e API (sem cache do backend).</p>
+
+        <!-- form em vez de só input+button: dá "Enter para buscar" de graça,
+             sem precisar de um listener de teclado separado no JS -->
+        <form id="form-busca">
+            <label for="campo-busca">Buscar monstro pelo nome:</label>
+            <input type="search" id="campo-busca" name="busca" placeholder="ex: goblin">
+            <button type="submit">Buscar</button>
+        </form>
+
+        <p id="mensagem-status" role="status"></p>
+
+        <table id="tabela-monstros">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Índice</th>
+                    <th>Detalhes</th>
+                </tr>
+            </thead>
+            <tbody id="corpo-tabela-monstros">
+                <!-- linhas preenchidas via JS (monstros.js), a partir do fetch em /monsters -->
+            </tbody>
+        </table>
+
+        <section id="detalhe-monstro" hidden>
+            <h2 id="detalhe-nome"></h2>
+            <dl>
+                <dt>Tamanho</dt>
+                <dd id="detalhe-tamanho"></dd>
+                <dt>Tipo</dt>
+                <dd id="detalhe-tipo"></dd>
+                <dt>Alinhamento</dt>
+                <dd id="detalhe-alinhamento"></dd>
+                <dt>Pontos de vida</dt>
+                <dd id="detalhe-hp"></dd>
+                <dt>Classe de armadura</dt>
+                <dd id="detalhe-ca"></dd>
+            </dl>
+        </section>
+    </div>
+
+    <script src="monstros.js"></script>
+</body>
+</html>

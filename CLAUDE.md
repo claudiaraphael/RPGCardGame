@@ -59,18 +59,16 @@ Os comentários do código são em português e têm propósito didático (expli
   (`dnd_cache`) e não na API externa a cada request. Ainda não
   implementado no código, só decidido/documentado.
 - **Autenticação/estado de jogo em construção pela autora, à mão**, em
-  `backend/auth/User.ts` e `backend/src/Systems/Systems.js` (explorando
-  um desenho tipo ECS — Entities/Components/Systems). Não são esboços
-  descartáveis como o antigo `auth/auth.js`: são trabalho ativo, em
-  pseudocódigo por enquanto porque a autora está iterando — **não
-  "corrija" a sintaxe nem prossiga esses arquivos sem pedido explícito**,
-  é exatamente a parte que conta pros 50% dela.
-  **Divergência a confirmar com a autora**: este documento (e a árvore
-  abaixo) descreviam `Systems.js` em `backend/Systems/`, irmã de `src/`;
-  o arquivo real está hoje em `backend/src/Systems/Systems.js` (dentro do
-  servidor). Pode ser intencional (Systems faz parte do runtime) ou só
-  `CLAUDE.md` desatualizado — ver `to-do/documentation/estudos/decisao-app-server-systems.md`
-  seção 3 pra mais contexto. Não movi nada, só documentei o estado real.
+  `backend/auth/User.ts` e `backend/Systems/Systems.js` (explorando
+  um desenho tipo ECS — Entities/Components/Systems, irmã de `src/`, que
+  é só o servidor HTTP). Não são esboços descartáveis como o antigo
+  `auth/auth.js`: são trabalho ativo, em pseudocódigo por enquanto
+  porque a autora está iterando — **não "corrija" a sintaxe nem
+  prossiga esses arquivos sem pedido explícito**, é exatamente a parte
+  que conta pros 50% dela.
+  (Já existiu uma divergência aqui — um commit chegou a mover o arquivo
+  pra `backend/src/Systems/`; foi revertida de volta pra
+  `backend/Systems/`, que é a localização decidida.)
 - **Guias de estudo próprios da autora** em
   `backend/to-do/documentation/estudos/`: `fundamentos-js-ts.md`,
   `gerencia-de-estado-com-classes.md`, `json-boas-praticas.md`,
@@ -78,18 +76,16 @@ Os comentários do código são em português e têm propósito didático (expli
   aplicado ao ECS) e `refPersonagens.md` (tradução PT-BR do SRD, recorte
   focado em criação de personagem — raças, classes, antecedentes,
   talentos, perícias, equipamento, magias).
-- **O frontend saiu deste repositório** e vive em repo próprio, HTML/CSS/JS
-  puro sem bundler, servido em dev pela extensão Live Server do VS Code
-  em `localhost:5500`/`127.0.0.1:5500`. **Localização real no disco desta
-  máquina**: `C:\Users\claud\portfolio\JavaScript\RPGCardGame\` (repo
-  irmão deste, fora da pasta `MVP Card Game\` — não confundir com a pasta
-  `frontend/` aqui dentro, que é só um `node_modules` residual;
-  ignore-a). Arquivos principais: `index.html`, `style.css`, `script.js`
-  (ainda vazio), `Dockerfile`. **Atenção**: o remote `origin` desse repo
-  está misconfigurado (aponta pra string `"main"`, não uma URL real) —
-  nunca foi de fato publicado no GitHub até onde foi checado. Confirmar
-  com a autora antes de assumir que ele está num repositório público de
-  verdade (exigência do requerimento).
+- **O frontend vive neste repositório, em `frontend/`**: HTML/CSS/JS puro
+  sem bundler, servido em dev pela extensão Live Server do VS Code em
+  `localhost:5500`/`127.0.0.1:5500`. Arquivos principais: `index.html`,
+  `style.css`, `script.js` (ainda vazio), `Dockerfile` (nginx:alpine) e
+  `to-do.md` (checklist do front). Ele começou num repo separado
+  (`C:\Users\claud\portfolio\JavaScript\RPGCardGame\`, remote
+  misconfigurado, nunca publicado) e foi copiado pra cá pra ficar no
+  mesmo repositório público (exigência do requerimento); o repo antigo
+  não é mais a referência. O `node_modules` dentro de `frontend/` é
+  residual — ignore.
 
 ## Docker (testado e funcionando)
 
@@ -121,9 +117,33 @@ Os comentários do código são em português e têm propósito didático (expli
 - **`tsconfig.json` exclui `to-do/`** do typecheck/build — tinha um
   rascunho de pseudocódigo (`to-do/documentation/Inventario/Inventario.ts`)
   que quebrava `npm run build` dentro do container.
-- **Próximos passos**: repetir pro `Dockerfile` do repo do front
+- **Próximos passos**: repetir pro `Dockerfile` do front (`frontend/`)
   (nginx:alpine servindo estáticos) e confirmar o CORS entre os dois
   containers.
+
+## Plano em andamento: monster-index / landing page (entrega 27/set 00h)
+
+Trabalho de hoje, dividido:
+
+- **Rota do backend pro monster-index: reaproveitar a existente.**
+  `GET /monsters` e `GET /monsters/:index` (`src/routes/index.ts` +
+  `entidades-dnd/schemas/monsters.schema.ts`) já batem na D&D API externa
+  a cada request (`fetchFromDndApi`, não leem do `dnd_cache`) — é
+  exatamente o comportamento que a landing page precisa. **Decisão: não
+  criar rota nova**, o front consome essas duas direto.
+- **Autora**: HTML/CSS/JS da landing page (em `frontend/`) e o Docker do backend (deixar o
+  `docker build` funcionando de ponta a ponta — já testado uma vez nesta
+  sessão, ver seção "Docker" acima; ela está retestando/ajustando numa
+  aba separada). Git (commits e push) fica com ela em ambos os repos.
+- **Claude**: normalizar o shape dos dados nas próprias rotas (código),
+  só se/quando precisar pro front consumir — não é tarefa de
+  documentação.
+- Branch de trabalho: `monster-index` (checkout feito nesta conversa, a
+  pedido explícito da autora — regra geral continua sendo ela quem roda
+  git).
+- `Systems.js` voltou pra `backend/Systems/Systems.js` (tinha ido pra
+  `backend/src/Systems/` num commit anterior; revertido pra bater com a
+  documentação, a pedido da autora).
 
 ## Bugs já encontrados e corrigidos (via validação contra dado real)
 
@@ -161,11 +181,11 @@ RPGCardGame/
 │   ├── src/
 │   │   ├── app.ts             # Express: CORS, rotas de auth + entidades, error handler
 │   │   ├── server.ts          # só importa app.ts e liga na porta 3000
-│   │   ├── Systems/
-│   │   │   └── Systems.js     # exploração de arquitetura ECS — trabalho da autora (ver nota de divergência acima)
 │   │   └── routes/
 │   │       ├── entityRouter.ts  # fábrica genérica: GET / e GET /:index pra qualquer entidade
 │   │       └── index.ts         # registra as 24 entidades nessa fábrica
+│   ├── Systems/
+│   │   └── Systems.js         # exploração de arquitetura ECS — trabalho da autora, irmã de src/ (não é parte do servidor HTTP)
 │   ├── db/
 │   │   ├── connection.ts      # abre o SQLite (better-sqlite3), WAL + foreign_keys ligados
 │   │   ├── schema.ts          # CREATE TABLE dnd_cache (cache da API externa)
@@ -208,8 +228,7 @@ RPGCardGame/
   Dependências de Swagger e `zod-to-openapi` continuam no `package.json`,
   mas hoje nada as usa (sobra do código arquivado; reservadas para quando
   a documentação interativa entrar, provavelmente perto da entrega/vídeo).
-- **Frontend**: fora deste repo (ver "Estado atual" acima pra localização
-  real no disco e alerta sobre o remote).
+- **Frontend**: `frontend/` (HTML/CSS/JS puro, ver "Estado atual").
 - **D&D API**: REST sem autenticação, base `DND_BASE_URL` + `/api/2014/...`.
 
 ## Comandos
@@ -280,7 +299,7 @@ Para rodar um arquivo isolado (ex: `seed.ts`, que não faz parte do servidor —
   compilado.
 - **`dnd_cache` é cache, não modelagem de jogo**: as tabelas de
   personagem/carta/deck/mão/combate são modelagem original da autora
-  (ver `auth/User.ts`, `src/Systems/Systems.js`) e ainda não têm tabela no
+  (ver `auth/User.ts`, `Systems/Systems.js`) e ainda não têm tabela no
   SQLite — só o cache da API externa tem, até agora.
 - **Vários pontos são esboços intencionais**: `criarPersonagem` lança
   "Implementar criação do personagem", `seed.ts` (raiz) tem `todo`s de
@@ -288,7 +307,7 @@ Para rodar um arquivo isolado (ex: `seed.ts`, que não faz parte do servidor —
   mesma requisição, `auth/auth.js` é esboço antigo não funcional,
   `to-do/documentation/Inventario/Inventario.ts` é pseudocódigo que não
   compila de propósito (por isso excluído do `tsconfig.json`).
-  `auth/User.ts` e `src/Systems/Systems.js` são trabalho ativo da autora,
+  `auth/User.ts` e `Systems/Systems.js` são trabalho ativo da autora,
   não esboços descartáveis — não "corrigir" sem pedido explícito.
 - **Sem testes automatizados.** `npm test` só imprime um erro proposital.
 
@@ -299,7 +318,7 @@ Para rodar um arquivo isolado (ex: `seed.ts`, que não faz parte do servidor —
   `seedEntity()` genérico são exceções justificadas: mesmo formato exato
   repetido 24 vezes, não abstração especulativa.
 - Respeite a regra dos 50% de código próprio — em especial, não avance
-  `auth/User.ts`/`src/Systems/Systems.js` sem pedido explícito, é trabalho
+  `auth/User.ts`/`Systems/Systems.js` sem pedido explícito, é trabalho
   ativo da autora.
 - Ao mexer no backend, rode `npx tsc --noEmit` em `backend/`.
 - Não há suíte de testes: no resumo final, descreva o que foi verificado

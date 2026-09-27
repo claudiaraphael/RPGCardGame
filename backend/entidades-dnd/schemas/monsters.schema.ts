@@ -7,8 +7,17 @@
 // apareceram nesse exemplo específico — ver ressalva no relatório final.
 
 import { z } from "zod";
-import { fetchFromDndApi } from "../dnd-api-client";
+import { fetchFromDndApi, DND_BASE_URL } from "../dnd-api-client";
 import { ApiReferenceSchema, ChoiceSchema, DamageSchema, DcSchema, UsageSchema } from "./shared.schema";
+
+// A D&D API devolve "url"/"image" como caminho relativo (ex:
+// "/api/2014/monsters/aboleth", "/api/images/monsters/aboleth.png") — só
+// pra monstros isso importa de verdade, porque a landing page do
+// monster-index usa "image" direto num <img src>, e um caminho relativo
+// resolveria contra a origem do front (localhost:5500), não da API.
+// Normalização feita só aqui, não em shared.schema.ts, pra não afetar as
+// outras 23 entidades sem necessidade.
+const paraUrlAbsoluta = (caminho: string): string => `${DND_BASE_URL}${caminho}`;
 
 export const MonsterSummarySchema = ApiReferenceSchema;
 export type MonsterSummary = z.infer<typeof MonsterSummarySchema>;
@@ -110,10 +119,16 @@ export type Monster = z.infer<typeof MonsterSchema>;
 
 export async function getMonsterList(): Promise<MonsterSummary[]> {
   const data = await fetchFromDndApi<{ results: unknown[] }>("/api/2014/monsters");
-  return MonsterSummarySchema.array().parse(data.results);
+  const lista = MonsterSummarySchema.array().parse(data.results);
+  return lista.map((monstro) => ({ ...monstro, url: paraUrlAbsoluta(monstro.url) }));
 }
 
 export async function getMonsterByIndex(index: string): Promise<Monster> {
   const data = await fetchFromDndApi<unknown>(`/api/2014/monsters/${index}`);
-  return MonsterSchema.parse(data);
+  const monstro = MonsterSchema.parse(data);
+  return {
+    ...monstro,
+    url: paraUrlAbsoluta(monstro.url),
+    image: monstro.image ? paraUrlAbsoluta(monstro.image) : monstro.image,
+  };
 }

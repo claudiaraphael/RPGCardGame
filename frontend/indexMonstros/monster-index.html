@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grimoire Index - RPG Monster Compendium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Lora:ital,wght@0,500;0,600;1,400;1,600&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* User's Exact Palette */
+      --c-scion: #0D19F4;           /* Electric Scion Blue from Figma */
+      --c-scion-glow: rgba(13, 25, 244, 0.6);
+      --c-scion-light: #3861FB;
+      --c-red: #BE1818;             /* Deep Crimson Red */
+      --c-red-glow: rgba(190, 24, 24, 0.55);
+      --c-orange: #DF5F47;          /* Flame Coral Orange */
+      --c-orange-glow: rgba(223, 95, 71, 0.45);
+      --c-yellow: #FFD698;          /* Warm Sunlight Gold */
+      --c-yellow-dim: rgba(255, 214, 152, 0.15);
+
+      /* Surfaces */
+      --bg-canvas: #0A12C2;
+      --bg-midnight: #060B68;
+      --bg-card-surface: #0E164D;
+      --bg-panel: rgba(10, 16, 68, 0.90);
+      --border-panel: rgba(223, 95, 71, 0.4);
+      --border-blue: rgba(56, 97, 251, 0.45);
+
+      /* Typography */
+      --font-display: 'Cinzel', serif;
+      --font-body: 'Inter', sans-serif;
+      --font-statblock: 'Lora', serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-pixel: 'Press Start 2P', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      background-image: 
+        radial-gradient(circle at 50% 12%, rgba(13, 25, 244, 0.95) 0%, transparent 70%),
+        linear-gradient(180deg, #060B68 0%, #0D19F4 35%, #081088 75%, #040845 100%);
+      background-attachment: fixed;
+      color: #FFF;
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Floating Ambient Pixel Flame Orbs */
+    .pixel-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.75;
+      animation: floatSlow 8s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      top: 50px;
+      left: 6%;
+      width: 52px;
+      height: 52px;
+      background: radial-gradient(circle, var(--c-yellow) 20%, var(--c-orange) 50%, var(--c-red) 85%);
+      box-shadow: 0 0 20px var(--c-orange-glow);
+    }
+    .orb-2 {
+      top: 120px;
+      right: 7%;
+      width: 68px;
+      height: 68px;
+      background: radial-gradient(circle, var(--c-yellow) 25%, var(--c-orange) 55%, var(--c-red) 90%);
+      box-shadow: 0 0 25px var(--c-red-glow);
+      animation-duration: 10s;
+    }
+    .orb-3 {
+      top: 400px;
+      left: 3%;
+      width: 44px;
+      height: 44px;
+      background: radial-gradient(circle, var(--c-yellow) 15%, var(--c-orange) 60%, var(--c-red) 90%);
+      animation-duration: 7s;
+    }
+    .orb-4 {
+      top: 760px;
+      right: 4%;
+      width: 58px;
+      height: 58px;
+      background: radial-gradient(circle, var(--c-yellow) 20%, var(--c-orange) 50%, var(--c-red) 85%);
+      box-shadow: 0 0 22px var(--c-orange-glow);
+      animation-duration: 9s;
+    }
+
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-24px) rotate(8deg); }
+    }
+
+    /* Top Sticky Header */
+    header {
+      background: rgba(6, 11, 104, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 2px solid var(--c-red);
+      padding: 0.85rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    .header-content {
+      max-width: 1700px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-decoration: none;
+    }
+
+    .brand-emblem {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--c-red), var(--c-orange));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 16px var(--c-red-glow), inset 0 0 10px var(--c-yellow);
+      border: 2px solid var(--c-yellow);
+      color: var(--c-yellow);
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.4rem;
+    }
+
+    .brand-title h1 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--c-yellow);
+      text-transform: uppercase;
+      text-shadow: 0 0 16px rgba(255, 214, 152, 0.4);
+    }
+
+    .brand-title p {
+      font-size: 0.72rem;
+      color: var(--c-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-weight: 700;
+    }
+
+    .badge-dnd {
+      background: var(--c-red);
+      color: #FFF;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.3rem 0.65rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      box-shadow: 0 0 10px var(--c-red-glow);
+    }
+
+    /* Classification Chips */
+    .types-bar-wrapper {
+      background: rgba(8, 14, 85, 0.95);
+      border-bottom: 1px solid var(--border-panel);
+      overflow-x: auto;
+      padding: 0.75rem 2rem;
+      scrollbar-width: thin;
+      position: relative;
+      z-index: 10;
+    }
+
+    .types-bar {
+      max-width: 1700px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0.55rem;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .type-chip {
+      background: rgba(14, 22, 77, 0.85);
+      border: 1px solid var(--border-blue);
+      color: #CBD5E1;
+      padding: 0.35rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .type-chip:hover {
+      border-color: var(--c-orange);
+      color: #FFF;
+      background: rgba(223, 95, 71, 0.2);
+    }
+
+    .type-chip.active {
+      background: linear-gradient(135deg, rgba(223, 95, 71, 0.35), rgba(190, 24, 24, 0.35));
+      border-color: var(--c-yellow);
+      color: var(--c-yellow);
+      box-shadow: 0 0 12px rgba(255, 214, 152, 0.35);
+      font-weight: 700;
+    }
+
+    /* Hero Spotlight: Stepped Solar Flare & Monster Battle Card */
+    .spotlight-hero {
+      position: relative;
+      z-index: 1;
+      max-width: 1700px;
+      margin: 1.5rem auto 1rem auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .solar-flare-container {
+      position: relative;
+      width: 100%;
+      max-width: 920px;
+      background: var(--bg-panel);
+      border: 2px solid var(--c-orange);
+      border-radius: 20px;
+      padding: 2.2rem 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3rem;
+      box-shadow: 0 12px 45px rgba(0, 0, 0, 0.65), 0 0 35px rgba(13, 25, 244, 0.45);
+      overflow: hidden;
+    }
+
+    .solar-stage {
+      position: relative;
+      width: 320px;
+      height: 390px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stepped-sunburst {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: 
+        radial-gradient(circle, var(--c-yellow) 0%, var(--c-yellow) 32%, var(--c-orange) 33%, var(--c-orange) 62%, var(--c-red) 63%, var(--c-red) 100%);
+      box-shadow: 
+        0 0 0 12px rgba(223, 95, 71, 0.4),
+        0 0 0 22px rgba(190, 24, 24, 0.25),
+        0 0 50px var(--c-orange-glow);
+      filter: drop-shadow(0 0 25px var(--c-red-glow));
+      animation: pulseAura 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseAura {
+      0% { transform: scale(0.97); }
+      100% { transform: scale(1.03); }
+    }
+
+    .rpg-battle-card {
+      position: relative;
+      z-index: 2;
+      width: 245px;
+      background: #11141E;
+      border: 3px solid var(--c-yellow);
+      border-radius: 12px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+    }
+
+    .rpg-battle-card:hover {
+      transform: translateY(-5px) scale(1.02);
+    }
+
+    .card-top-bar {
+      background: linear-gradient(90deg, var(--c-red), var(--c-orange));
+      padding: 0.4rem 0.65rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--c-yellow);
+    }
+
+    .card-monster-name {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #FFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-mana-cost {
+      background: #000;
+      color: var(--c-yellow);
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 20px;
+      border: 1px solid var(--c-yellow);
+    }
+
+    .card-art-frame {
+      width: 100%;
+      height: 160px;
+      background: #000;
+      border-bottom: 2px solid var(--c-yellow);
+      overflow: hidden;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .card-art-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      image-rendering: auto;
+    }
+
+    .card-type-bar {
+      background: #1C2030;
+      padding: 0.25rem 0.65rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--c-yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-panel);
+    }
+
+    .card-text-box {
+      padding: 0.65rem;
+      background: #141724;
+      font-size: 0.76rem;
+      line-height: 1.35;
+      color: #E2E8F0;
+      min-height: 95px;
+    }
+
+    .card-signature-move {
+      font-weight: 700;
+      color: var(--c-orange);
+    }
+
+    .card-bottom-stats {
+      background: #0D101C;
+      border-top: 2px solid var(--c-yellow);
+      padding: 0.35rem 0.65rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+
+    .card-stat-ac {
+      color: var(--c-scion-light);
+    }
+
+    .card-stat-hp {
+      color: #FF5555;
+    }
+
+    .spotlight-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .spotlight-tag {
+      font-family: var(--font-pixel);
+      font-size: 0.68rem;
+      color: var(--c-yellow);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .spotlight-title {
+      font-family: var(--font-display);
+      font-size: 2.1rem;
+      font-weight: 900;
+      color: #FFF;
+      line-height: 1.15;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    }
+
+    .spotlight-submeta {
+      font-size: 0.95rem;
+      color: var(--c-yellow);
+      font-style: italic;
+    }
+
+    .spotlight-lore {
+      font-family: var(--font-statblock);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #CBD5E1;
+      max-width: 520px;
+      border-left: 3px solid var(--c-orange);
+      padding-left: 0.85rem;
+    }
+
+    .spotlight-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-focus-wiki {
+      background: linear-gradient(135deg, var(--c-orange), var(--c-red));
+      color: #FFF;
+      border: 1px solid var(--c-yellow);
+      padding: 0.65rem 1.4rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px var(--c-red-glow);
+    }
+
+    .btn-focus-wiki:hover {
+      box-shadow: 0 6px 20px rgba(223, 95, 71, 0.7);
+      transform: translateY(-2px);
+    }
+
+    /* Search & Filter Toolbar */
+    .toolbar-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1700px;
+      width: 100%;
+      margin: 1.25rem auto 1rem auto;
+      padding: 0 2rem;
+    }
+
+    .search-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+      position: relative;
+    }
+
+    .search-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--c-red), var(--c-orange), var(--c-yellow), var(--c-scion-light));
+      border-radius: 12px 12px 0 0;
+    }
+
+    .search-bar-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-input-wrapper svg {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94A3B8;
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(14, 22, 77, 0.9);
+      border: 1px solid var(--border-blue);
+      border-radius: 8px;
+      padding: 0.85rem 1rem 0.85rem 2.85rem;
+      color: #FFF;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: var(--font-body);
+    }
+
+    .search-input:focus {
+      border-color: var(--c-scion-light);
+      box-shadow: 0 0 16px var(--c-scion-glow);
+    }
+
+    .btn-search {
+      background: linear-gradient(135deg, var(--c-orange), var(--c-red));
+      color: #FFF;
+      border: 1px solid var(--c-yellow);
+      border-radius: 8px;
+      padding: 0.85rem 1.6rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px var(--c-red-glow);
+      white-space: nowrap;
+    }
+
+    .btn-search:hover {
+      box-shadow: 0 6px 20px rgba(223, 95, 71, 0.7);
+      transform: translateY(-1px);
+    }
+
+    .btn-adv-filter {
+      background: rgba(14, 22, 77, 0.9);
+      border: 1px solid var(--border-blue);
+      color: var(--c-yellow);
+      border-radius: 8px;
+      padding: 0.85rem 1.2rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-adv-filter:hover, .btn-adv-filter.active {
+      border-color: var(--c-yellow);
+      background: rgba(255, 214, 152, 0.15);
+    }
+
+    .btn-reset {
+      background: transparent;
+      border: 1px solid var(--border-panel);
+      color: #CBD5E1;
+      border-radius: 8px;
+      padding: 0.85rem 1.2rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-reset:hover {
+      background: rgba(14, 22, 77, 0.9);
+      color: var(--c-yellow);
+      border-color: var(--c-orange);
+    }
+
+    /* Advanced Filter Drawer */
+    .advanced-filter-drawer {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px dashed var(--border-panel);
+    }
+
+    .advanced-filter-drawer.open {
+      display: grid;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .filter-group label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--c-yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .filter-select {
+      background: rgba(14, 22, 77, 0.9);
+      border: 1px solid var(--border-blue);
+      color: #FFF;
+      padding: 0.55rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .filter-select:focus {
+      border-color: var(--c-scion-light);
+    }
+
+    /* Workspace: Table & Wiki Stat Block */
+    .main-workspace {
+      position: relative;
+      z-index: 1;
+      max-width: 1700px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 2rem 3rem 2rem;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 520px;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    /* Compendium Table */
+    .table-container {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .table-toolbar {
+      padding: 0.9rem 1.25rem;
+      border-bottom: 1px solid var(--border-panel);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(8, 14, 85, 0.9);
+    }
+
+    .results-count {
+      font-size: 0.88rem;
+      color: #CBD5E1;
+    }
+
+    .results-count strong {
+      color: var(--c-yellow);
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    thead th {
+      background: rgba(14, 22, 77, 0.95);
+      color: var(--c-yellow);
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 2px solid var(--c-red);
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      transition: color 0.2s ease;
+    }
+
+    thead th:hover {
+      color: var(--c-scion-light);
+    }
+
+    thead th .sort-icon {
+      font-size: 0.72rem;
+      margin-left: 0.3rem;
+      color: #94A3B8;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(45, 51, 68, 0.5);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: rgba(223, 95, 71, 0.12);
+    }
+
+    tbody tr.selected {
+      background: rgba(13, 25, 244, 0.25);
+      border-left: 4px solid var(--c-yellow);
+    }
+
+    tbody td {
+      padding: 0.85rem 1rem;
+      color: #F1F5F9;
+      vertical-align: middle;
+    }
+
+    .cell-name-box {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .monster-thumb {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      background: #000;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1rem;
+      border: 1px solid var(--border-panel);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .monster-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .monster-name-link {
+      font-weight: 700;
+      color: #FFF;
+      font-size: 0.95rem;
+    }
+
+    tbody tr:hover .monster-name-link {
+      color: var(--c-yellow);
+    }
+
+    .source-tag {
+      font-size: 0.7rem;
+      color: var(--c-orange);
+      font-style: italic;
+    }
+
+    .badge-cr {
+      background: rgba(223, 95, 71, 0.2);
+      color: var(--c-orange);
+      border: 1px solid var(--c-orange);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      display: inline-block;
+      min-width: 32px;
+      text-align: center;
+    }
+
+    .badge-type {
+      text-transform: capitalize;
+      color: var(--c-yellow);
+      background: var(--c-yellow-dim);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .stat-ac, .stat-hp {
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    .stat-hp {
+      color: #FF6666;
+    }
+
+    .stat-ac {
+      color: var(--c-scion-light);
+    }
+
+    .btn-statblock-expand {
+      background: rgba(14, 22, 77, 0.9);
+      border: 1px solid var(--border-blue);
+      color: var(--c-yellow);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-statblock-expand:hover, tr.selected .btn-statblock-expand {
+      background: var(--c-yellow);
+      color: #000;
+      border-color: var(--c-yellow);
+      box-shadow: 0 0 10px rgba(255, 214, 152, 0.5);
+    }
+
+    /* Wiki Stat Block (Strict Schema Integration) */
+    .wiki-container {
+      background: var(--bg-panel);
+      border: 2px solid var(--c-orange);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(223, 95, 71, 0.25);
+      position: sticky;
+      top: 5rem;
+      max-height: calc(100vh - 6rem);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wiki-header {
+      background: linear-gradient(135deg, var(--c-red), rgba(190, 24, 24, 0.85));
+      border-bottom: 3px solid var(--c-yellow);
+      padding: 1.25rem 1.5rem;
+    }
+
+    .wiki-meta-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.35rem;
+    }
+
+    .wiki-monster-name {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--c-yellow);
+      letter-spacing: 0.04em;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+    }
+
+    .wiki-submeta {
+      font-family: var(--font-statblock);
+      font-style: italic;
+      color: #F8FAFC;
+      font-size: 0.9rem;
+    }
+
+    .wiki-body {
+      padding: 1.25rem 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      font-family: var(--font-statblock);
+    }
+
+    .tapered-rule {
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--c-red), var(--c-orange), var(--c-yellow), transparent);
+      border: none;
+      margin: 0.25rem 0;
+    }
+
+    .stat-vital-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.92rem;
+    }
+
+    .stat-vital-row span strong, .stat-vital-row div strong {
+      color: var(--c-orange);
+      font-family: var(--font-body);
+      font-weight: 700;
+    }
+
+    .abilities-box {
+      background: rgba(14, 22, 77, 0.9);
+      border: 1px solid var(--border-panel);
+      border-radius: 8px;
+      padding: 0.75rem 0.5rem;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      text-align: center;
+      gap: 0.25rem;
+    }
+
+    .ability-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .ability-label {
+      font-family: var(--font-body);
+      font-weight: 800;
+      font-size: 0.68rem;
+      color: var(--c-yellow);
+      text-transform: uppercase;
+    }
+
+    .ability-val {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1rem;
+      color: #FFF;
+    }
+
+    .ability-modifier {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--c-scion-light);
+      font-weight: 700;
+    }
+
+    .statblock-heading {
+      font-family: var(--font-display);
+      color: var(--c-yellow);
+      font-size: 1.15rem;
+      border-bottom: 1px solid var(--c-red);
+      padding-bottom: 0.2rem;
+      margin-top: 0.4rem;
+    }
+
+    .trait-entry, .action-entry {
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .entry-title {
+      font-family: var(--font-statblock);
+      font-weight: 700;
+      font-style: italic;
+      color: var(--c-yellow);
+    }
+
+    .badge-dc {
+      background: rgba(13, 25, 244, 0.3);
+      border: 1px solid var(--c-scion-light);
+      color: #FFF;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      margin-left: 0.25rem;
+    }
+
+    .badge-usage {
+      background: rgba(223, 95, 71, 0.25);
+      border: 1px solid var(--c-orange);
+      color: var(--c-yellow);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      margin-left: 0.25rem;
+    }
+
+    @media (max-width: 1200px) {
+      .main-workspace {
+        grid-template-columns: 1fr;
+      }
+      .solar-flare-container {
+        flex-direction: column;
+        text-align: center;
+      }
+      .spotlight-lore {
+        border-left: none;
+        border-top: 2px solid var(--c-orange);
+        padding: 0.75rem 0 0 0;
+      }
+      .spotlight-actions {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Ambient Orbs from Figma Draft -->
+  <div class="pixel-orb orb-1"></div>
+  <div class="pixel-orb orb-2"></div>
+  <div class="pixel-orb orb-3"></div>
+  <div class="pixel-orb orb-4"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <a href="#" class="brand">
+        <div class="brand-emblem">M</div>
+        <div class="brand-title">
+          <h1>Monster Index</h1>
+          <p>RPG Bestiary &amp; Card Compendium</p>
+        </div>
+      </a>
+
+      <div class="header-badges">
+        <span class="badge-dnd">D&amp;D API 2014</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Creature Type Chips Bar -->
+  <nav class="types-bar-wrapper">
+    <div class="types-bar" id="typesBar">
+      <div class="type-chip active" data-type="all">All Monsters</div>
+      <div class="type-chip" data-type="aberration">Aberration</div>
+      <div class="type-chip" data-type="dragon">Dragon</div>
+      <div class="type-chip" data-type="fiend">Fiend</div>
+      <div class="type-chip" data-type="celestial">Celestial</div>
+      <div class="type-chip" data-type="undead">Undead</div>
+      <div class="type-chip" data-type="construct">Construct</div>
+      <div class="type-chip" data-type="beast">Beast</div>
+      <div class="type-chip" data-type="monstrosity">Monstrosity</div>
+      <div class="type-chip" data-type="ooze">Ooze</div>
+      <div class="type-chip" data-type="humanoid">Humanoid</div>
+    </div>
+  </nav>
+
+  <!-- Hero Spotlight: Stepped Solar Flare & Monster Battle Card (Figma Rectangle 2/Pad... Inspo) -->
+  <section class="spotlight-hero">
+    <div class="solar-flare-container">
+      <div class="solar-stage">
+        <div class="stepped-sunburst"></div>
+        
+        <div class="rpg-battle-card" id="heroCard">
+          <div class="card-top-bar">
+            <span class="card-monster-name" id="cardName">Aboleth</span>
+            <span class="card-mana-cost" id="cardCost">CR 10</span>
+          </div>
+          <div class="card-art-frame">
+            <img id="cardArt" class="card-art-img" src="" alt="Monster Art">
+          </div>
+          <div class="card-type-bar" id="cardType">Aberration &bull; Large</div>
+          <div class="card-text-box">
+            <span class="card-signature-move" id="cardAbility">Mucous Cloud:</span>
+            <span id="cardDesc"> While underwater, transforms creatures into diseased thralls.</span>
+          </div>
+          <div class="card-bottom-stats">
+            <span class="card-stat-ac" id="cardAc">AC 17</span>
+            <span class="card-stat-hp" id="cardHp">HP 135</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spotlight Meta & Lore -->
+      <div class="spotlight-info">
+        <div class="spotlight-tag">
+          <span>&#9670;</span> Featured Monster Card
+        </div>
+        <h2 class="spotlight-title" id="spotlightTitle">Aboleth</h2>
+        <div class="spotlight-submeta" id="spotlightSubmeta">Large aberration, lawful evil &bull; Challenge 10 (5,900 XP)</div>
+        <p class="spotlight-lore" id="spotlightLore">
+          Before the coming of the gods, aboleths lurked in primordial oceans. They shaped early lifeforms and retain memories extending unbroken across millennia.
+        </p>
+        <div class="spotlight-actions">
+          <button class="btn-focus-wiki" id="btnScrollToWiki">Inspect Stat Block &darr;</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search & Filter Controls -->
+  <div class="toolbar-container">
+    <div class="search-panel">
+      <div class="search-bar-row">
+        <div class="search-input-wrapper">
+          <input 
+            type="search" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Search monsters by name, type, senses, languages, or traits..."
+            autocomplete="off"
+          >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+
+        <button class="btn-search" id="btnFilter">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Search
+        </button>
+
+        <button class="btn-adv-filter" id="btnAdvToggle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+          Filters
+        </button>
+
+        <button class="btn-reset" id="btnReset">Reset</button>
+      </div>
+
+      <!-- Advanced Filter Drawer -->
+      <div class="advanced-filter-drawer" id="advDrawer">
+        <div class="filter-group">
+          <label>Min CR</label>
+          <select class="filter-select" id="filterCrMin">
+            <option value="0">CR 0</option>
+            <option value="1">CR 1</option>
+            <option value="5">CR 5</option>
+            <option value="10">CR 10</option>
+            <option value="15">CR 15</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Max CR</label>
+          <select class="filter-select" id="filterCrMax">
+            <option value="30" selected>CR 30</option>
+            <option value="20">CR 20</option>
+            <option value="15">CR 15</option>
+            <option value="10">CR 10</option>
+            <option value="5">CR 5</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Size</label>
+          <select class="filter-select" id="filterSize">
+            <option value="all">All Sizes</option>
+            <option value="Small">Small</option>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+            <option value="Huge">Huge</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Alignment</label>
+          <select class="filter-select" id="filterAlignment">
+            <option value="all">Any Alignment</option>
+            <option value="good">Good</option>
+            <option value="neutral">Neutral</option>
+            <option value="evil">Evil</option>
+            <option value="unaligned">Unaligned</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Workspace: Table & Wiki Stat Block -->
+  <main class="main-workspace" id="mainWorkspace">
+    <!-- Table -->
+    <section class="table-container">
+      <div class="table-toolbar">
+        <span class="results-count">Showing <strong id="monsterCount">0</strong> monsters in compendium</span>
+        <span id="statusMsg" role="status" style="font-size: 0.76rem; color: #94A3B8;"></span>
+      </div>
+
+      <div class="table-wrapper">
+        <table id="monsterTable">
+          <thead>
+            <tr>
+              <th style="width: 44px;">Icon</th>
+              <th data-sort="challenge_rating">CR <span class="sort-icon">&#8597;</span></th>
+              <th data-sort="name">Name <span class="sort-icon">&#8597;</span></th>
+              <th data-sort="type">Type <span class="sort-icon">&#8597;</span></th>
+              <th data-sort="size">Size <span class="sort-icon">&#8597;</span></th>
+              <th data-sort="ac">AC <span class="sort-icon">&#8597;</span></th>
+              <th data-sort="hit_points">HP <span class="sort-icon">&#8597;</span></th>
+              <th data-sort="alignment">Alignment <span class="sort-icon">&#8597;</span></th>
+              <th>Speed</th>
+              <th style="text-align: center; width: 48px;">Card</th>
+            </tr>
+          </thead>
+          <tbody id="monsterTableBody">
+            <!-- Injected by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Wiki Stat Block (Schema Compliant) -->
+    <aside class="wiki-container" id="wikiSection">
+      <div class="wiki-header">
+        <div class="wiki-meta-top">
+          <span class="badge-type" id="wikiTypeBadge">Aberration</span>
+          <span class="badge-cr" id="wikiCrBadge">CR 10 (5,900 XP)</span>
+        </div>
+        <h2 class="wiki-monster-name" id="wikiName">Aboleth</h2>
+        <div class="wiki-submeta" id="wikiSubmeta">Large aberration, lawful evil</div>
+      </div>
+
+      <div class="wiki-body">
+        <div class="stat-vital-row">
+          <span><strong>Armor Class:</strong> <span class="stat-ac" id="wikiAc">17 (natural)</span></span>
+          <span><strong>Hit Points:</strong> <span class="stat-hp" id="wikiHp">135 (18d10 + 36)</span></span>
+          <span><strong>Speed:</strong> <span id="wikiSpeed">10 ft., swim 40 ft.</span></span>
+        </div>
+
+        <hr class="tapered-rule">
+
+        <!-- 6 Core Attributes directly from MonsterSchema -->
+        <div class="abilities-box">
+          <div class="ability-col">
+            <span class="ability-label">STR</span>
+            <span class="ability-val" id="wikiStr">21</span>
+            <span class="ability-modifier" id="wikiStrMod">(+5)</span>
+          </div>
+          <div class="ability-col">
+            <span class="ability-label">DEX</span>
+            <span class="ability-val" id="wikiDex">9</span>
+            <span class="ability-modifier" id="wikiDexMod">(-1)</span>
+          </div>
+          <div class="ability-col">
+            <span class="ability-label">CON</span>
+            <span class="ability-val" id="wikiCon">15</span>
+            <span class="ability-modifier" id="wikiConMod">(+2)</span>
+          </div>
+          <div class="ability-col">
+            <span class="ability-label">INT</span>
+            <span class="ability-val" id="wikiInt">18</span>
+            <span class="ability-modifier" id="wikiIntMod">(+4)</span>
+          </div>
+          <div class="ability-col">
+            <span class="ability-label">WIS</span>
+            <span class="ability-val" id="wikiWis">15</span>
+            <span class="ability-modifier" id="wikiWisMod">(+2)</span>
+          </div>
+          <div class="ability-col">
+            <span class="ability-label">CHA</span>
+            <span class="ability-val" id="wikiCha">18</span>
+            <span class="ability-modifier" id="wikiChaMod">(+4)</span>
+          </div>
+        </div>
+
+        <hr class="tapered-rule">
+
+        <!-- Proficiencies, Immunities, Senses, Languages -->
+        <div class="stat-vital-row">
+          <div><strong>Saving Throws:</strong> <span id="wikiSaves">CON +6, INT +8, WIS +6</span></div>
+          <div><strong>Skills:</strong> <span id="wikiSkills">History +12, Perception +10</span></div>
+          <div id="wikiDamageResistancesRow" style="display:none;"><strong>Damage Resistances:</strong> <span id="wikiDamageResistances">--</span></div>
+          <div id="wikiDamageImmunitiesRow" style="display:none;"><strong>Damage Immunities:</strong> <span id="wikiDamageImmunities">--</span></div>
+          <div id="wikiConditionImmunitiesRow" style="display:none;"><strong>Condition Immunities:</strong> <span id="wikiConditionImmunities">--</span></div>
+          <div><strong>Senses:</strong> <span id="wikiSenses">darkvision 120 ft., passive Perception 20</span></div>
+          <div><strong>Languages:</strong> <span id="wikiLanguages">Deep Speech, telepathy 120 ft.</span></div>
+          <div><strong>Proficiency Bonus:</strong> <span id="wikiProfBonus" style="color:var(--c-yellow); font-family:var(--font-mono);">+4</span></div>
+        </div>
+
+        <hr class="tapered-rule">
+
+        <!-- special_abilities -->
+        <div id="wikiTraitsSection">
+          <h3 class="statblock-heading">Special Abilities</h3>
+          <div id="wikiTraits" style="display:flex; flex-direction:column; gap:0.6rem; margin-top:0.4rem;">
+            <!-- Trait list -->
+          </div>
+        </div>
+
+        <!-- actions -->
+        <div id="wikiActionsSection">
+          <h3 class="statblock-heading">Actions</h3>
+          <div id="wikiActions" style="display:flex; flex-direction:column; gap:0.6rem; margin-top:0.4rem;">
+            <!-- Actions list -->
+          </div>
+        </div>
+
+        <!-- legendary_actions -->
+        <div id="wikiLegendarySection" style="display:none;">
+          <h3 class="statblock-heading">Legendary Actions</h3>
+          <p style="font-size:0.8rem; color:#CBD5E1; margin-bottom:0.4rem;">Can take 3 legendary actions, choosing from options below.</p>
+          <div id="wikiLegendaryActions" style="display:flex; flex-direction:column; gap:0.6rem;">
+            <!-- Legendary actions list -->
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    // Lista real vem do backend (ver <script type="module"> no fim do arquivo,
+    // que chama window.loadMonstersFromApi). Começa vazia — nada de monstro
+    // inventado ("Ignivar") nem dado hardcoded representando a D&D API.
+    const monstersDatabase = [];
+    let currentList = [...monstersDatabase];
+    let selectedMonster = monstersDatabase[0];
+    let activeType = 'all';
+    let sortKey = 'challenge_rating';
+    let sortAsc = false;
+
+    // Helper functions for MonsterSchema attributes
+    function calcMod(val) {
+      const m = Math.floor((val - 10) / 2);
+      return m >= 0 ? `(+${m})` : `(${m})`;
+    }
+
+    function formatSpeed(speed) {
+      if (!speed) return '--';
+      const parts = [];
+      if (speed.walk) parts.push(speed.walk);
+      if (speed.swim) parts.push(`swim ${speed.swim}`);
+      if (speed.fly) parts.push(`fly ${speed.fly}`);
+      if (speed.burrow) parts.push(`burrow ${speed.burrow}`);
+      if (speed.climb) parts.push(`climb ${speed.climb}`);
+      return parts.join(', ') || '--';
+    }
+
+    function formatAC(acList) {
+      if (!acList || acList.length === 0) return { val: '--', str: '--' };
+      const item = acList[0];
+      return { val: item.value, str: `${item.value} (${item.type})` };
+    }
+
+    function formatSaves(profList) {
+      if (!profList) return 'None';
+      const saves = profList
+        .filter(p => p.proficiency.name.startsWith('Saving Throw:'))
+        .map(p => `${p.proficiency.name.replace('Saving Throw:', '').trim()} +${p.value}`);
+      return saves.length > 0 ? saves.join(', ') : 'None';
+    }
+
+    function formatSkills(profList) {
+      if (!profList) return 'None';
+      const skills = profList
+        .filter(p => p.proficiency.name.startsWith('Skill:'))
+        .map(p => `${p.proficiency.name.replace('Skill:', '').trim()} +${p.value}`);
+      return skills.length > 0 ? skills.join(', ') : 'None';
+    }
+
+    function formatSenses(senses) {
+      if (!senses) return '--';
+      const parts = [];
+      if (senses.darkvision) parts.push(`darkvision ${senses.darkvision}`);
+      if (senses.blindsight) parts.push(`blindsight ${senses.blindsight}`);
+      if (senses.truesight) parts.push(`truesight ${senses.truesight}`);
+      if (senses.tremorsense) parts.push(`tremorsense ${senses.tremorsense}`);
+      parts.push(`passive Perception ${senses.passive_perception || 10}`);
+      return parts.join(', ');
+    }
+
+    // Render Table
+    // Constrói cada linha via createElement/textContent (nunca innerHTML com
+    // dado vindo da API) — regra de segurança do CLAUDE.md do front, porque
+    // esse dado agora vem de fora (D&D API via backend), não é mais mock.
+    function celula(conteudo, { className, style } = {}) {
+      const td = document.createElement('td');
+      if (className) td.className = className;
+      if (style) td.style.cssText = style;
+      if (conteudo instanceof Node) {
+        td.appendChild(conteudo);
+      } else {
+        td.textContent = conteudo;
+      }
+      return td;
+    }
+
+    function badge(className, texto) {
+      const span = document.createElement('span');
+      span.className = className;
+      span.textContent = texto;
+      return span;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('monsterTableBody');
+      tbody.replaceChildren();
+      document.getElementById('monsterCount').textContent = currentList.length;
+
+      if (currentList.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 10;
+        td.style.cssText = 'text-align: center; padding: 2.5rem; color: #94A3B8;';
+        td.textContent = 'No monsters found matching your filters.';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+
+      currentList.forEach(m => {
+        const tr = document.createElement('tr');
+        if (selectedMonster && selectedMonster.index === m.index) {
+          tr.classList.add('selected');
+        }
+
+        const ac = formatAC(m.armor_class);
+        const speedStr = formatSpeed(m.speed);
+
+        // Coluna do ícone: imagem se existir, senão a inicial do nome.
+        const thumb = document.createElement('div');
+        thumb.className = 'monster-thumb';
+        if (m.image) {
+          const img = document.createElement('img');
+          img.src = m.image;
+          img.alt = m.name;
+          img.addEventListener('error', () => {
+            img.remove();
+            thumb.textContent = m.name.charAt(0);
+          });
+          thumb.appendChild(img);
+        } else {
+          thumb.textContent = m.name.charAt(0);
+        }
+
+        const nameBox = document.createElement('div');
+        nameBox.className = 'cell-name-box';
+        const nameInner = document.createElement('div');
+        const nameLink = document.createElement('div');
+        nameLink.className = 'monster-name-link';
+        nameLink.textContent = m.name;
+        const sourceTag = document.createElement('div');
+        sourceTag.className = 'source-tag';
+        sourceTag.textContent = m.url;
+        nameInner.append(nameLink, sourceTag);
+        nameBox.appendChild(nameInner);
+
+        const btnExpand = document.createElement('button');
+        btnExpand.className = 'btn-statblock-expand';
+        btnExpand.title = 'Inspect Stat Block';
+        btnExpand.textContent = '◆';
+
+        tr.append(
+          celula(thumb),
+          celula(badge('badge-cr', String(m.challenge_rating))),
+          celula(nameBox),
+          celula(badge('badge-type', m.type)),
+          celula(m.size, { style: 'color: #94A3B8;' }),
+          celula(String(ac.val), { className: 'stat-ac' }),
+          celula(String(m.hit_points), { className: 'stat-hp' }),
+          celula(m.alignment, { style: 'font-size: 0.8rem; color: #CBD5E1; text-transform: capitalize;' }),
+          celula(speedStr, { style: 'font-size: 0.8rem; color: #94A3B8;' }),
+          celula(btnExpand, { style: 'text-align: center;' })
+        );
+
+        tr.addEventListener('click', () => {
+          selectMonster(m);
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Select and populate Wiki Dossier
+    function selectMonster(m) {
+      selectedMonster = m;
+
+      // Update table selection
+      document.querySelectorAll('#monsterTableBody tr').forEach(r => r.classList.remove('selected'));
+      renderTable();
+
+      const ac = formatAC(m.armor_class);
+
+      // Hero Spotlight Card
+      document.getElementById('cardName').textContent = m.name;
+      document.getElementById('cardCost').textContent = `CR ${m.challenge_rating}`;
+      document.getElementById('cardType').textContent = `${m.type} \u2022 ${m.size}`;
+      
+      const sigAbility = m.special_abilities && m.special_abilities[0] ? m.special_abilities[0] : null;
+      document.getElementById('cardAbility').textContent = sigAbility ? `${sigAbility.name}:` : 'Special Attack:';
+      document.getElementById('cardDesc').textContent = sigAbility ? ` ${sigAbility.desc.slice(0, 110)}...` : ' Lethal strike.';
+      document.getElementById('cardAc').textContent = `AC ${ac.val}`;
+      document.getElementById('cardHp').textContent = `HP ${m.hit_points}`;
+
+      // A D&D API não tem imagem pra todo monstro — sem fallback pra um
+      // arquivo fixo (era um resquício do mock), só esconde a arte.
+      const cardArtImg = document.getElementById('cardArt');
+      if (m.image) {
+        cardArtImg.src = m.image;
+        cardArtImg.style.display = 'block';
+      } else {
+        cardArtImg.removeAttribute('src');
+        cardArtImg.style.display = 'none';
+      }
+
+      // Spotlight Header
+      document.getElementById('spotlightTitle').textContent = m.name;
+      document.getElementById('spotlightSubmeta').textContent = `${m.size} ${m.type}, ${m.alignment} \u2022 Challenge ${m.challenge_rating} (${m.xp.toLocaleString()} XP)`;
+      document.getElementById('spotlightLore').textContent = `Registered in D&D 2014 API at ${m.url}. Hit dice: ${m.hit_dice} (${m.hit_points_roll}). Speed: ${formatSpeed(m.speed)}.`;
+
+      // Wiki Header
+      document.getElementById('wikiName').textContent = m.name;
+      document.getElementById('wikiTypeBadge').textContent = m.type;
+      document.getElementById('wikiCrBadge').textContent = `CR ${m.challenge_rating} (${m.xp.toLocaleString()} XP)`;
+      document.getElementById('wikiSubmeta').textContent = `${m.size} ${m.type}, ${m.alignment}`;
+
+      // Vitals
+      document.getElementById('wikiAc').textContent = ac.str;
+      document.getElementById('wikiHp').textContent = `${m.hit_points} (${m.hit_points_roll})`;
+      document.getElementById('wikiSpeed').textContent = formatSpeed(m.speed);
+
+      // Attributes
+      document.getElementById('wikiStr').textContent = m.strength;
+      document.getElementById('wikiStrMod').textContent = calcMod(m.strength);
+      document.getElementById('wikiDex').textContent = m.dexterity;
+      document.getElementById('wikiDexMod').textContent = calcMod(m.dexterity);
+      document.getElementById('wikiCon').textContent = m.constitution;
+      document.getElementById('wikiConMod').textContent = calcMod(m.constitution);
+      document.getElementById('wikiInt').textContent = m.intelligence;
+      document.getElementById('wikiIntMod').textContent = calcMod(m.intelligence);
+      document.getElementById('wikiWis').textContent = m.wisdom;
+      document.getElementById('wikiWisMod').textContent = calcMod(m.wisdom);
+      document.getElementById('wikiCha').textContent = m.charisma;
+      document.getElementById('wikiChaMod').textContent = calcMod(m.charisma);
+
+      // Proficiencies & Senses
+      document.getElementById('wikiSaves').textContent = formatSaves(m.proficiencies);
+      document.getElementById('wikiSkills').textContent = formatSkills(m.proficiencies);
+      document.getElementById('wikiSenses').textContent = formatSenses(m.senses);
+      document.getElementById('wikiLanguages').textContent = m.languages || '--';
+      document.getElementById('wikiProfBonus').textContent = `+${m.proficiency_bonus}`;
+
+      // Damage Immunities / Resistances
+      const resRow = document.getElementById('wikiDamageResistancesRow');
+      if (m.damage_resistances && m.damage_resistances.length > 0) {
+        resRow.style.display = 'block';
+        document.getElementById('wikiDamageResistances').textContent = m.damage_resistances.join(', ');
+      } else {
+        resRow.style.display = 'none';
+      }
+
+      const immRow = document.getElementById('wikiDamageImmunitiesRow');
+      if (m.damage_immunities && m.damage_immunities.length > 0) {
+        immRow.style.display = 'block';
+        document.getElementById('wikiDamageImmunities').textContent = m.damage_immunities.join(', ');
+      } else {
+        immRow.style.display = 'none';
+      }
+
+      const condRow = document.getElementById('wikiConditionImmunitiesRow');
+      if (m.condition_immunities && m.condition_immunities.length > 0) {
+        condRow.style.display = 'block';
+        document.getElementById('wikiConditionImmunities').textContent = m.condition_immunities.map(c => c.name).join(', ');
+      } else {
+        condRow.style.display = 'none';
+      }
+
+      // special_abilities / actions / legendary_actions: desc e name vêm da
+      // API, então nunca via innerHTML (regra do CLAUDE.md) — monta o DOM
+      // na mão, só os badges (dc/usage) que têm HTML fixo entram como nó.
+      function entradaComTitulo(nome, desc, badges) {
+        const div = document.createElement('div');
+        const titulo = document.createElement('span');
+        titulo.className = 'entry-title';
+        titulo.append(`${nome}.`, ...badges);
+        div.append(titulo, ` ${desc}`);
+        return div;
+      }
+
+      function badgeDc(dc) {
+        if (!dc) return [];
+        const span = document.createElement('span');
+        span.className = 'badge-dc';
+        span.textContent = `DC ${dc.dc_value ?? ''} ${dc.dc_type ? dc.dc_type.name : ''}`.trim();
+        return [span];
+      }
+
+      function badgeUsage(usage) {
+        if (!usage) return [];
+        const span = document.createElement('span');
+        span.className = 'badge-usage';
+        span.textContent = `${usage.times ?? ''}/${usage.type ?? ''}`;
+        return [span];
+      }
+
+      // special_abilities
+      const traitsContainer = document.getElementById('wikiTraits');
+      traitsContainer.replaceChildren();
+      if (m.special_abilities && m.special_abilities.length > 0) {
+        document.getElementById('wikiTraitsSection').style.display = 'block';
+        m.special_abilities.forEach(t => {
+          const div = entradaComTitulo(t.name, t.desc, [...badgeUsage(t.usage), ...badgeDc(t.dc)]);
+          div.className = 'trait-entry';
+          traitsContainer.appendChild(div);
+        });
+      } else {
+        document.getElementById('wikiTraitsSection').style.display = 'none';
+      }
+
+      // actions
+      const actionsContainer = document.getElementById('wikiActions');
+      actionsContainer.replaceChildren();
+      if (m.actions && m.actions.length > 0) {
+        document.getElementById('wikiActionsSection').style.display = 'block';
+        m.actions.forEach(a => {
+          const div = entradaComTitulo(a.name, a.desc, [...badgeUsage(a.usage), ...badgeDc(a.dc)]);
+          div.className = 'action-entry';
+          actionsContainer.appendChild(div);
+        });
+      } else {
+        document.getElementById('wikiActionsSection').style.display = 'none';
+      }
+
+      // legendary_actions
+      const legContainer = document.getElementById('wikiLegendaryActions');
+      legContainer.replaceChildren();
+      if (m.legendary_actions && m.legendary_actions.length > 0) {
+        document.getElementById('wikiLegendarySection').style.display = 'block';
+        m.legendary_actions.forEach(la => {
+          const div = entradaComTitulo(la.name, la.desc, []);
+          div.className = 'action-entry';
+          legContainer.appendChild(div);
+        });
+      } else {
+        document.getElementById('wikiLegendarySection').style.display = 'none';
+      }
+    }
+
+    // Filter Logic
+    function applyFilters() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const minCr = parseFloat(document.getElementById('filterCrMin').value) || 0;
+      const maxCr = parseFloat(document.getElementById('filterCrMax').value) || 30;
+      const sizeFilter = document.getElementById('filterSize').value;
+      const alignFilter = document.getElementById('filterAlignment').value;
+
+      currentList = monstersDatabase.filter(m => {
+        const matchesQ = !q || 
+          m.name.toLowerCase().includes(q) ||
+          m.type.toLowerCase().includes(q) ||
+          m.alignment.toLowerCase().includes(q) ||
+          (m.languages && m.languages.toLowerCase().includes(q)) ||
+          (m.special_abilities && m.special_abilities.some(s => s.name.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q))) ||
+          (m.actions && m.actions.some(a => a.name.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q)));
+
+        const matchesType = (activeType === 'all') || (m.type.toLowerCase() === activeType.toLowerCase());
+        const matchesCr = (m.challenge_rating >= minCr && m.challenge_rating <= maxCr);
+        const matchesSize = (sizeFilter === 'all') || (m.size.toLowerCase() === sizeFilter.toLowerCase());
+        const matchesAlign = (alignFilter === 'all') || m.alignment.toLowerCase().includes(alignFilter.toLowerCase());
+
+        return matchesQ && matchesType && matchesCr && matchesSize && matchesAlign;
+      });
+
+      // Sort
+      currentList.sort((a, b) => {
+        let va = a[sortKey];
+        let vb = b[sortKey];
+
+        if (sortKey === 'ac') {
+          va = a.armor_class[0]?.value || 0;
+          vb = b.armor_class[0]?.value || 0;
+        }
+
+        if (typeof va === 'string') {
+          return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+        } else {
+          return sortAsc ? (va - vb) : (vb - va);
+        }
+      });
+
+      renderTable();
+    }
+
+    // Event Bindings
+    document.getElementById('btnFilter').addEventListener('click', applyFilters);
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('searchInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') applyFilters();
+    });
+
+    document.getElementById('btnReset').addEventListener('click', () => {
+      document.getElementById('searchInput').value = '';
+      activeType = 'all';
+      document.getElementById('filterCrMin').value = '0';
+      document.getElementById('filterCrMax').value = '30';
+      document.getElementById('filterSize').value = 'all';
+      document.getElementById('filterAlignment').value = 'all';
+
+      document.querySelectorAll('.type-chip').forEach(c => {
+        c.classList.remove('active');
+        if (c.dataset.type === 'all') c.classList.add('active');
+      });
+
+      applyFilters();
+    });
+
+    document.getElementById('btnAdvToggle').addEventListener('click', () => {
+      document.getElementById('advDrawer').classList.toggle('open');
+      document.getElementById('btnAdvToggle').classList.toggle('active');
+    });
+
+    document.querySelectorAll('.type-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeType = chip.dataset.type;
+        applyFilters();
+      });
+    });
+
+    ['filterCrMin', 'filterCrMax', 'filterSize', 'filterAlignment'].forEach(id => {
+      document.getElementById(id).addEventListener('change', applyFilters);
+    });
+
+    document.querySelectorAll('thead th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const col = th.dataset.sort;
+        if (sortKey === col) {
+          sortAsc = !sortAsc;
+        } else {
+          sortKey = col;
+          sortAsc = true;
+        }
+        applyFilters();
+      });
+    });
+
+    document.getElementById('btnScrollToWiki').addEventListener('click', () => {
+      document.getElementById('wikiSection').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Global hook to ingest full monster dataset from the backend (chamado
+    // pelo <script type="module"> abaixo, que faz o fetch de verdade).
+    window.loadMonstersFromApi = function(monstersArray) {
+      if (Array.isArray(monstersArray) && monstersArray.length > 0) {
+        monstersDatabase.length = 0;
+        monstersArray.forEach(m => monstersDatabase.push(m));
+        currentList = [...monstersDatabase];
+        selectMonster(monstersDatabase[0]);
+        applyFilters();
+      }
+    };
+
+    // Render inicial: a lista só chega depois do fetch no módulo abaixo, então
+    // não dá pra chamar selectMonster com monstersDatabase[0] (undefined) aqui.
+    renderTable();
+  </script>
+
+  <script type="module">
+    // Fetch de verdade: consome o backend (GET /monsters + GET /monsters/:index,
+    // que batem na D&D API externa a cada request — decisão documentada no
+    // CLAUDE.md pra essa landing page). MonsterApiClient já existe em
+    // monster-api.js com fallback pra API pública e cache local; só faltava
+    // ligar ele nessa página.
+    import { defaultMonsterClient } from './monster-api.js';
+
+    const statusEl = document.getElementById('statusMsg');
+
+    async function carregarMonstrosDaApi() {
+      try {
+        statusEl.textContent = 'Carregando índice de monstros...';
+        const resumo = await defaultMonsterClient.getMonsterList();
+
+        const indices = resumo.map(m => m.index);
+        const detalhes = await defaultMonsterClient.prefetchBatch(
+          indices,
+          6,
+          (carregados, total) => {
+            statusEl.textContent = `Carregando monstros... ${carregados}/${total}`;
+          }
+        );
+
+        window.loadMonstersFromApi(detalhes);
+        statusEl.textContent = `${detalhes.length} monstros carregados.`;
+      } catch (erro) {
+        console.error(erro);
+        statusEl.textContent = 'Não foi possível carregar os monstros. O backend está rodando em localhost:3000?';
+      }
+    }
+
+    carregarMonstrosDaApi();
+  </script>
+</body>
+</html>

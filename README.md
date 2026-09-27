@@ -199,6 +199,14 @@ npx tsc --noEmit
 | `npm start` | ✅ `node dist/server.js` (rodar depois de `npm run build`) |
 | `npx ts-node db/runSeed.ts` | ✅ popula o SQLite a partir da D&D API |
 
+## Ferramentas de desenvolvimento
+
+- **Figma via MCP**: servidor MCP oficial do Figma
+  (`https://mcp.figma.com/mcp`) adicionado ao Claude Code como servidor HTTP,
+  pra consultar/gerar a partir de arquivos e frames do Figma direto na
+  conversa. Exige autenticação (`/mcp` no Claude Code, escolher `figma` e
+  logar no navegador); a config fica local (`.claude.json`), não versionada.
+
 ## Segurança
 
 - Segredos (inclusive `SESSION_SECRET`) ficam só em `backend/.env`, fora do

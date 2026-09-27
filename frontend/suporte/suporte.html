@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central de Suporte Arcano - AuroraRPG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Lora:ital,wght@0,500;0,600;1,400&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Paleta Oficial */
+      --c-scion: #0D19F4;           /* Electric Scion Blue */
+      --c-scion-glow: rgba(13, 25, 244, 0.6);
+      --c-scion-light: #3861FB;
+      --c-yellow: #FFD698;          /* 5% - Sunlight Gold */
+      --c-orange: #DF5F47;          /* 29% - Flame Coral */
+      --c-orange-glow: rgba(223, 95, 71, 0.45);
+      --c-red: #BE1818;             /* 51% - Deep Crimson */
+      --c-red-glow: rgba(190, 24, 24, 0.55);
+
+      /* Superfícies */
+      --bg-canvas: #0A12C2;
+      --bg-midnight: #060B68;
+      --bg-card: #0E164D;
+      --bg-panel: rgba(10, 16, 68, 0.94);
+      --border-panel: rgba(223, 95, 71, 0.45);
+      --border-blue: rgba(56, 97, 251, 0.45);
+
+      /* Tipografia */
+      --font-display: 'Cinzel', serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      background-image: 
+        radial-gradient(circle at 50% 12%, rgba(13, 25, 244, 0.95) 0%, transparent 70%),
+        linear-gradient(180deg, #060B68 0%, #0D19F4 35%, #081088 75%, #040845 100%);
+      background-attachment: fixed;
+      color: #FFF;
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Floating Pixel Flame Orbs */
+    .pixel-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.75;
+      animation: floatSlow 8s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      top: 80px;
+      left: 5%;
+      width: 52px;
+      height: 52px;
+      background: radial-gradient(circle, var(--c-yellow) 20%, var(--c-orange) 50%, var(--c-red) 85%);
+      box-shadow: 0 0 20px var(--c-orange-glow);
+    }
+    .orb-2 {
+      top: 140px;
+      right: 6%;
+      width: 68px;
+      height: 68px;
+      background: radial-gradient(circle, var(--c-yellow) 25%, var(--c-orange) 55%, var(--c-red) 90%);
+      box-shadow: 0 0 25px var(--c-red-glow);
+      animation-duration: 10s;
+    }
+    .orb-3 {
+      top: 600px;
+      left: 3%;
+      width: 44px;
+      height: 44px;
+      background: radial-gradient(circle, var(--c-yellow) 15%, var(--c-orange) 60%, var(--c-red) 90%);
+      animation-duration: 7s;
+    }
+    .orb-4 {
+      top: 850px;
+      right: 4%;
+      width: 58px;
+      height: 58px;
+      background: radial-gradient(circle, var(--c-yellow) 20%, var(--c-orange) 50%, var(--c-red) 85%);
+      box-shadow: 0 0 22px var(--c-orange-glow);
+      animation-duration: 9s;
+    }
+
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-24px) rotate(8deg); }
+    }
+
+    /* Top Sticky Header */
+    header {
+      background: rgba(6, 11, 104, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 2px solid var(--c-red);
+      padding: 0.85rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    .header-content {
+      max-width: 1700px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+    }
+
+    .brand-emblem {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--c-red), var(--c-orange));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 16px var(--c-red-glow), inset 0 0 10px var(--c-yellow);
+      border: 2px solid var(--c-yellow);
+      color: var(--c-yellow);
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.3rem;
+    }
+
+    .brand-title h1 {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--c-yellow);
+      text-transform: uppercase;
+      text-shadow: 0 0 16px rgba(255, 214, 152, 0.4);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #E2E8F0;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--c-yellow);
+      text-shadow: 0 0 10px rgba(255, 214, 152, 0.4);
+    }
+
+    .auth-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(14, 22, 77, 0.85);
+      border: 1px solid var(--border-panel);
+      padding: 0.35rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--c-orange), var(--c-red));
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: #FFF;
+      border: 1px solid var(--c-yellow);
+    }
+
+    .btn-auth-toggle {
+      background: transparent;
+      border: 1px solid var(--border-panel);
+      color: var(--c-yellow);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-auth-toggle:hover {
+      background: rgba(223, 95, 71, 0.2);
+    }
+
+    /* Container Principal */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 2rem auto 3rem auto;
+      padding: 0 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    .page-hero-title {
+      text-align: center;
+    }
+
+    .page-hero-title h2 {
+      font-family: var(--font-display);
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: #FFF;
+      letter-spacing: 0.05em;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    }
+
+    .page-hero-title p {
+      font-size: 0.95rem;
+      color: var(--c-yellow);
+      margin-top: 0.25rem;
+      font-style: italic;
+    }
+
+    /* Layout: Formulário + Painel Lateral */
+    .support-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 1.8rem;
+      align-items: start;
+    }
+
+    /* Caixa Principal do Formulário */
+    .support-card {
+      background: var(--bg-panel);
+      border: 2px solid var(--border-panel);
+      border-radius: 16px;
+      box-shadow: 0 12px 45px rgba(0, 0, 0, 0.65), 0 0 30px rgba(13, 25, 244, 0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Abas de Categorias Flamejantes */
+    .category-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: rgba(14, 22, 77, 0.95);
+      border-bottom: 2px solid var(--border-panel);
+    }
+
+    .cat-tab {
+      background: transparent;
+      border: none;
+      color: #CBD5E1;
+      padding: 1rem 0.75rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.25s ease;
+      position: relative;
+      text-align: center;
+    }
+
+    .cat-tab:not(:last-child) {
+      border-right: 1px solid rgba(45, 51, 68, 0.6);
+    }
+
+    .cat-tab:hover {
+      background: rgba(223, 95, 71, 0.15);
+      color: #FFF;
+    }
+
+    .cat-tab.active {
+      background: linear-gradient(135deg, rgba(190, 24, 24, 0.8), rgba(223, 95, 71, 0.6));
+      color: #FFF;
+      box-shadow: inset 0 -3px 0 var(--c-yellow), 0 0 15px var(--c-red-glow);
+    }
+
+    .support-form-body {
+      padding: 2rem 2.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--c-yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .form-input, .form-textarea {
+      background: rgba(14, 22, 77, 0.9);
+      border: 1px solid var(--border-blue);
+      color: #FFF;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      font-family: var(--font-body);
+      transition: all 0.2s;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--c-scion-light);
+      box-shadow: 0 0 15px var(--c-scion-glow);
+    }
+
+    /* Seletor de Prioridade com Pills Coloridas */
+    .priority-pills {
+      display: flex;
+      gap: 0.65rem;
+    }
+
+    .priority-pill {
+      flex: 1;
+      padding: 0.55rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid var(--border-blue);
+      background: rgba(14, 22, 77, 0.8);
+      color: #CBD5E1;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .priority-pill.active[data-val="baixa"] {
+      background: rgba(16, 185, 129, 0.25);
+      border-color: #10B981;
+      color: #34D399;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .priority-pill.active[data-val="media"] {
+      background: rgba(255, 214, 152, 0.25);
+      border-color: var(--c-yellow);
+      color: var(--c-yellow);
+      box-shadow: 0 0 12px rgba(255, 214, 152, 0.3);
+    }
+
+    .priority-pill.active[data-val="alta"] {
+      background: rgba(223, 95, 71, 0.3);
+      border-color: var(--c-orange);
+      color: var(--c-orange);
+      box-shadow: 0 0 12px var(--c-orange-glow);
+    }
+
+    .priority-pill.active[data-val="critica"] {
+      background: rgba(190, 24, 24, 0.35);
+      border-color: var(--c-red);
+      color: #FF5555;
+      box-shadow: 0 0 15px var(--c-red-glow);
+    }
+
+    .btn-submit-support {
+      background: linear-gradient(135deg, var(--c-yellow), #FFB84D);
+      color: #0B0E20;
+      border: 1.5px solid var(--c-yellow);
+      padding: 0.95rem 1.8rem;
+      border-radius: 8px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      box-shadow: 0 6px 20px rgba(255, 214, 152, 0.35);
+      transition: all 0.25s ease;
+      margin-top: 0.5rem;
+    }
+
+    .btn-submit-support:hover {
+      box-shadow: 0 8px 25px rgba(255, 214, 152, 0.55);
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #FFF, var(--c-yellow));
+    }
+
+    /* Painel Lateral: Histórico de Chamados */
+    .history-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .history-header {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--c-yellow);
+      border-bottom: 1px solid var(--border-panel);
+      padding-bottom: 0.65rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      max-height: 520px;
+      overflow-y: auto;
+    }
+
+    .ticket-item {
+      background: rgba(14, 22, 77, 0.85);
+      border: 1px solid var(--border-blue);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .ticket-item:hover {
+      border-color: var(--c-orange);
+      background: rgba(223, 95, 71, 0.1);
+    }
+
+    .ticket-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ticket-id {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--c-yellow);
+      font-weight: 700;
+    }
+
+    .badge-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+
+    .status-review {
+      background: rgba(223, 95, 71, 0.25);
+      border: 1px solid var(--c-orange);
+      color: var(--c-orange);
+    }
+
+    .status-resolved {
+      background: rgba(0, 210, 255, 0.2);
+      border: 1px solid var(--c-scion-light);
+      color: var(--c-scion-light);
+    }
+
+    .ticket-title-text {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: #F8FAFC;
+    }
+
+    .ticket-date {
+      font-size: 0.72rem;
+      color: #94A3B8;
+    }
+
+    /* Estado Bloqueado (Se não logado) */
+    .gated-box {
+      background: var(--bg-panel);
+      border: 2px dashed var(--c-red);
+      border-radius: 16px;
+      text-align: center;
+      padding: 4rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      grid-column: 1 / -1;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #11141E;
+      border: 1px solid var(--c-yellow);
+      color: #FFF;
+      padding: 0.85rem 1.4rem;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      z-index: 300;
+      display: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1024px) {
+      .support-layout {
+        grid-template-columns: 1fr;
+      }
+      .category-tabs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Ambient Orbs -->
+  <div class="pixel-orb orb-1"></div>
+  <div class="pixel-orb orb-2"></div>
+  <div class="pixel-orb orb-3"></div>
+  <div class="pixel-orb orb-4"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="brand">
+        <div class="brand-emblem">A</div>
+        <div class="brand-title">
+          <h1>AuroraRPG</h1>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="monster-index.html">Bestiário &amp; Cartas</a></li>
+        <li><a href="index.html#charactersSection">Personagens</a></li>
+        <li><a href="suporte.html" class="active">Suporte</a></li>
+      </ul>
+
+      <div class="auth-bar">
+        <div class="user-pill" id="userPill">
+          <div class="user-avatar">M</div>
+          <span id="userStatusText">Mestre Arcano (Autenticado)</span>
+        </div>
+        <button class="btn-auth-toggle" id="btnAuthToggle">Alternar Login</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-hero-title">
+      <h2>Central de Suporte Arcano</h2>
+      <p>Envie pedidos, sugestões de jogo e relate anomalias para os guardiões do AuroraRPG</p>
+    </div>
+
+    <!-- Layout: Formulário + Histórico Lateral -->
+    <div class="support-layout" id="supportLayout">
+      <!-- Formulário de Envio -->
+      <section class="support-card">
+        <!-- Abas de Categorias -->
+        <div class="category-tabs" id="catTabs">
+          <button class="cat-tab" data-cat="pedidos">Pedidos</button>
+          <button class="cat-tab" data-cat="sugestoes">Sugestões de Features</button>
+          <button class="cat-tab active" data-cat="bugs">Erros / Bugs</button>
+          <button class="cat-tab" data-cat="suporte">Suporte Geral</button>
+        </div>
+
+        <form class="support-form-body" id="supportForm" onsubmit="handleSendTicket(event)">
+          <div class="form-group">
+            <label class="form-label" for="ticketSubject">Assunto do Chamado</label>
+            <input type="text" id="ticketSubject" class="form-input" placeholder="Ex: Falha no cálculo de dano crítico do Ladino..." required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nível de Prioridade</label>
+            <div class="priority-pills" id="priorityContainer">
+              <div class="priority-pill" data-val="baixa">Baixa</div>
+              <div class="priority-pill active" data-val="media">Média</div>
+              <div class="priority-pill" data-val="alta">Alta</div>
+              <div class="priority-pill" data-val="critica">Crítica</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="ticketDetails">Descrição Detalhada &bull; Passos / Ideia</label>
+            <textarea id="ticketDetails" class="form-textarea" rows="6" placeholder="Descreva com detalhes o que aconteceu, passos para reproduzir ou a ideia de nova mecânica para o AuroraRPG..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit-support">
+            <span>&#9889;</span> Enviar Chamado
+          </button>
+        </form>
+      </section>
+
+      <!-- Painel Lateral: Histórico de Chamados -->
+      <aside class="history-card">
+        <div class="history-header">
+          <span>Histórico de Chamados</span>
+          <span style="font-size: 0.75rem; color: #94A3B8; font-family: var(--font-mono);" id="ticketCount">5 tickets</span>
+        </div>
+
+        <div class="history-list" id="ticketHistoryList">
+          <!-- Itens Injetados por JS -->
+        </div>
+      </aside>
+    </div>
+
+    <!-- Bloqueio Se Não Autenticado -->
+    <div class="gated-box" id="gatedBox" style="display: none;">
+      <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--c-yellow);">
+        Acesso Exclusivo para Jogadores Autenticados
+      </h3>
+      <p style="color: #CBD5E1; max-width: 500px;">
+        Para evitar spam e associar seus chamados, fichas e relatórios ao seu perfil de aventureiro, você precisa estar autenticado no sistema.
+      </p>
+      <button class="btn-submit-support" onclick="toggleAuth(true)">
+        Autenticar Agora
+      </button>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    let isAuthed = true;
+    let currentCategory = 'bugs';
+    let currentPriority = 'media';
+
+    // Mock inicial de histórico de tickets conforme o mockup visual
+    let tickets = [
+      {
+        id: "#TK-1082",
+        category: "bugs",
+        title: "Chamado sobre processos em AuroraRPG...",
+        priority: "media",
+        status: "review",
+        statusLabel: "Em Análise",
+        date: "Hoje às 19:40"
+      },
+      {
+        id: "#TK-1080",
+        category: "sugestoes",
+        title: "Adição de baralhos elementais no combate...",
+        priority: "alta",
+        status: "review",
+        statusLabel: "Em Análise",
+        date: "Ontem às 22:15"
+      },
+      {
+        id: "#TK-1089",
+        category: "pedidos",
+        title: "Solicitação de ficha para NPCs da Guilda...",
+        priority: "baixa",
+        status: "resolved",
+        statusLabel: "Resolvido",
+        date: "24/09/2026"
+      },
+      {
+        id: "#TK-1075",
+        category: "suporte",
+        title: "Dúvida sobre cálculo de AC em monstros...",
+        priority: "baixa",
+        status: "resolved",
+        statusLabel: "Resolvido",
+        date: "22/09/2026"
+      }
+    ];
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3500);
+    }
+
+    function toggleAuth(force) {
+      isAuthed = (force !== undefined) ? force : !isAuthed;
+      const userPill = document.getElementById('userPill');
+      const supportLayout = document.getElementById('supportLayout');
+      const gatedBox = document.getElementById('gatedBox');
+      const btnToggle = document.getElementById('btnAuthToggle');
+
+      if (isAuthed) {
+        userPill.style.display = 'flex';
+        supportLayout.style.display = 'grid';
+        gatedBox.style.display = 'none';
+        btnToggle.textContent = 'Sair (Logout)';
+        showToast('Autenticado com sucesso.');
+      } else {
+        userPill.style.display = 'none';
+        supportLayout.style.display = 'none';
+        gatedBox.style.display = 'flex';
+        btnToggle.textContent = 'Entrar (Login)';
+        showToast('Modo deslogado ativado.');
+      }
+    }
+
+    document.getElementById('btnAuthToggle').addEventListener('click', () => toggleAuth());
+
+    // Abas de Categoria
+    document.querySelectorAll('.cat-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentCategory = tab.dataset.cat;
+      });
+    });
+
+    // Seletor de Prioridade
+    document.querySelectorAll('.priority-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.priority-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        currentPriority = pill.dataset.val;
+      });
+    });
+
+    // Renderizar Histórico de Chamados
+    function renderTickets() {
+      const container = document.getElementById('ticketHistoryList');
+      container.innerHTML = '';
+      document.getElementById('ticketCount').textContent = `${tickets.length} chamados`;
+
+      tickets.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'ticket-item';
+        const isResolved = t.status === 'resolved';
+
+        item.innerHTML = `
+          <div class="ticket-top">
+            <span class="ticket-id">${t.id}</span>
+            <span class="badge-status ${isResolved ? 'status-resolved' : 'status-review'}">
+              ${t.statusLabel}
+            </span>
+          </div>
+          <div class="ticket-title-text">${t.title}</div>
+          <div class="ticket-date">${t.date}</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // Envio de Ticket
+    async function handleSendTicket(e) {
+      e.preventDefault();
+      if (!isAuthed) {
+        alert('Faça login primeiro.');
+        return;
+      }
+
+      const subject = document.getElementById('ticketSubject').value.trim();
+      const details = document.getElementById('ticketDetails').value.trim();
+
+      const newTicketId = `#TK-${Math.floor(Math.random() * 900 + 1090)}`;
+      const newTicket = {
+        id: newTicketId,
+        category: currentCategory,
+        title: subject,
+        priority: currentPriority,
+        status: 'review',
+        statusLabel: 'Em Análise',
+        date: 'Agora mesmo'
+      };
+
+      // Tenta enviar para o backend
+      try {
+        await fetch('http://localhost:3000/support', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...newTicket,
+            details,
+            user: 'claudio@aurora.rpg'
+          })
+        });
+      } catch (_) {}
+
+      tickets.unshift(newTicket);
+      renderTickets();
+      showToast(`Chamado ${newTicketId} criado com sucesso!`);
+      document.getElementById('supportForm').reset();
+    }
+
+    renderTickets();
+  </script>
+</body>
+</html>

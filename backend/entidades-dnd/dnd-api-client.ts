@@ -8,7 +8,7 @@
 import axios from "axios";
 
 process.loadEnvFile();
-const DND_BASE_URL = process.env.DND_BASE_URL;
+export const DND_BASE_URL = process.env.DND_BASE_URL;
 if (!DND_BASE_URL) {
   throw new Error("DND_BASE_URL não está definida");
 }

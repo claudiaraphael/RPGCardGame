@@ -1,0 +1,43 @@
+/* Estilo próprio do índice de monstros — separado de style.css porque essa
+   é uma página nova (character selection não usa tabela nem busca). */
+
+#form-busca {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 10px 0;
+}
+
+#campo-busca {
+    flex: 1;
+    padding: 6px 8px;
+}
+
+#tabela-monstros {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgb(219, 229, 171);
+}
+
+#tabela-monstros th,
+#tabela-monstros td {
+    border: 1px solid rgb(0, 140, 255);
+    padding: 6px 10px;
+    text-align: left;
+}
+
+#detalhe-monstro {
+    background: rgb(219, 229, 171);
+    border: 1px solid rgb(0, 140, 255);
+    border-radius: 16px;
+    padding: 10px;
+    margin-top: 16px;
+}
+
+#detalhe-monstro dt {
+    font-weight: bold;
+}
+
+#detalhe-monstro dd {
+    margin: 0 0 8px 0;
+}

@@ -13,6 +13,7 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import entityRoutes from "./routes";
 import authRoutes from "../auth/authRoutes";
+import personagemRoutes from "../personagem/personagemRoutes";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use(
 app.use(express.json({ limit: "100kb" }));
 
 app.use("/auth", authRoutes);
+app.use("/personagens", personagemRoutes);
 app.use(entityRoutes);
 
 // Rota não mapeada.
