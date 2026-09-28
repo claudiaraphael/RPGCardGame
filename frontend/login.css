@@ -1,0 +1,34 @@
+/* Estilo próprio da tela de login/registro — reaproveita as cores de
+   style.css, só adiciona o layout de formulário. */
+
+.auth-panel {
+    background: rgb(219, 229, 171);
+    border: 1px solid rgb(0, 140, 255);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.auth-panel form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 320px;
+}
+
+.auth-panel input {
+    padding: 6px 8px;
+}
+
+.auth-panel button {
+    margin-top: 8px;
+    padding: 6px 10px;
+    align-self: flex-start;
+}
+
+#usuario-logado {
+    background: rgb(219, 229, 171);
+    border: 1px solid rgb(0, 140, 255);
+    border-radius: 16px;
+    padding: 10px;
+}

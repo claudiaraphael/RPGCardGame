@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login.css">
+    <title>Entrar — RPG Card Game</title>
+</head>
+<body>
+    <div id="container">
+        <h1>Entrar</h1>
+        <p>Login/cadastro simples — o token fica guardado só neste
+           navegador (<code>localStorage</code>), pra usar em
+           <a href="tickets.html">tickets.html</a>.</p>
+
+        <section class="auth-panel">
+            <h2>Já tenho conta</h2>
+            <form id="form-login">
+                <label for="login-email">E-mail</label>
+                <input type="email" id="login-email" required>
+
+                <label for="login-senha">Senha</label>
+                <input type="password" id="login-senha" required>
+
+                <button type="submit">Entrar</button>
+            </form>
+        </section>
+
+        <section class="auth-panel">
+            <h2>Criar conta</h2>
+            <form id="form-registro">
+                <label for="registro-email">E-mail</label>
+                <input type="email" id="registro-email" required>
+
+                <label for="registro-username">Nome de usuário</label>
+                <input type="text" id="registro-username" minlength="3" maxlength="30" required>
+
+                <label for="registro-senha">Senha (mín. 8 caracteres)</label>
+                <input type="password" id="registro-senha" minlength="8" required>
+
+                <button type="submit">Criar conta e entrar</button>
+            </form>
+        </section>
+
+        <p id="mensagem-status" role="status"></p>
+        <p id="usuario-logado" hidden>
+            Logado como <strong id="usuario-nome"></strong>.
+            <button type="button" id="btn-sair">Sair</button>
+        </p>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>

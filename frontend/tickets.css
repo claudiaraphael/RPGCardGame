@@ -1,0 +1,39 @@
+/* Estilo próprio da tela de tickets — reaproveita as cores de style.css. */
+
+#form-ticket {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 480px;
+    background: rgb(219, 229, 171);
+    border: 1px solid rgb(0, 140, 255);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 10px 0;
+}
+
+#form-ticket input,
+#form-ticket select,
+#form-ticket textarea {
+    padding: 6px 8px;
+    font-family: inherit;
+}
+
+#form-ticket button {
+    margin-top: 8px;
+    padding: 6px 10px;
+    align-self: flex-start;
+}
+
+#tabela-tickets {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgb(219, 229, 171);
+}
+
+#tabela-tickets th,
+#tabela-tickets td {
+    border: 1px solid rgb(0, 140, 255);
+    padding: 6px 10px;
+    text-align: left;
+}

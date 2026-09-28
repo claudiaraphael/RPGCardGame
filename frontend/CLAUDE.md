@@ -18,21 +18,32 @@ de cada escolha.
 ## Estado atual
 
 - `index.html`: tela de "Character Selection" com 3 imagens (`ch1/2/3.png`)
-  ligadas a `character1..3.html`, que não existem.
-- `style.css`: estilo básico.
-- `script.js`: vazio.
+  ligadas a `character1..3.html`, que não existem — ainda a base, vai ser
+  substituída pela nova UI que a autora está gerando.
+- `style.css` / `script.js` (vazio): da tela acima.
+- **Índice de monstros: implementado**, em duas versões — `monstros.html`/
+  `.js`/`.css` (tabela simples + busca) e `indexMonstros/monster-index.html`
+  + `monster-api.js` (versão completa: busca, filtros, statblock inteiro).
+  Ambas consomem `GET /monsters`/`GET /monsters/:index` do backend
+  (`http://localhost:3000`), que batem na D&D API externa a cada request —
+  não há chamada direta do front pra D&D API em nenhum lugar.
+- **Login/tickets: em construção** (pedido da autora) — `login.html`+
+  `login.js` (formulário simples, guarda o JWT em `localStorage`) e
+  `tickets.html`+`tickets.js` (criar/ver os próprios tickets), consumindo
+  `/auth/login`, `/auth/register` e `/tickets` do backend.
 - `Dockerfile` (`nginx:alpine` copiando os estáticos) + `.dockerignore`:
-  ainda não testados.
+  ainda não testados — hoje só copia os arquivos antigos
+  (`index.html`/`script.js`/`style.css`/`ch1-3.png`), precisa ser
+  atualizado quando a nova UI estiver pronta pra incluir as páginas novas.
 - `node_modules/` aqui dentro é residual — ignore.
 - Checklist de próximos passos: `to-do.md`.
 
-## Prioridade: landing page com índice de monstros (entrega 27/set 00h)
+## Nova UI (em andamento pela autora)
 
-- Consome `GET /monsters` e `GET /monsters/:index` do backend, que batem na
-  D&D API externa a cada request (não leem do SQLite). **Não há rota nova.**
-- Shape real dos dados: `../backend/to-do/documentation/dnd-full-data.json`.
-- Se o shape precisar ser normalizado, isso é feito no backend (nas rotas),
-  não no front.
+A autora está gerando uma nova UI pro front, que vai substituir/absorver as
+páginas atuais. Quando ela chegar: atualizar esta seção, o `Dockerfile`
+(hoje só lista arquivos que não vão existir mais) e a whitelist de CORS em
+`../backend/src/app.ts` se a origem/porta mudar.
 
 ## Convenções e segurança
 

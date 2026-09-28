@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tickets.css">
+    <title>Meus tickets — RPG Card Game</title>
+</head>
+<body>
+    <div id="container">
+        <h1>Meus tickets</h1>
+        <p>Sugestão de feature, bug ou pedido de suporte. Precisa estar
+           logado — <a href="login.html">entrar aqui</a>.</p>
+
+        <p id="aviso-login" role="status" hidden>
+            Você precisa entrar primeiro. <a href="login.html">Ir pro login</a>.
+        </p>
+
+        <form id="form-ticket">
+            <label for="ticket-tipo">Tipo</label>
+            <select id="ticket-tipo" required>
+                <option value="feature">Sugestão de feature/mudança</option>
+                <option value="bug">Erro/bug</option>
+                <option value="support">Suporte</option>
+            </select>
+
+            <label for="ticket-titulo">Título</label>
+            <input type="text" id="ticket-titulo" minlength="3" maxlength="120" required>
+
+            <label for="ticket-descricao">Descrição</label>
+            <textarea id="ticket-descricao" rows="5" minlength="1" maxlength="4000" required></textarea>
+
+            <button type="submit">Enviar ticket</button>
+        </form>
+
+        <p id="mensagem-status" role="status"></p>
+
+        <table id="tabela-tickets">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Título</th>
+                    <th>Status</th>
+                    <th>Criado em</th>
+                </tr>
+            </thead>
+            <tbody id="corpo-tabela-tickets"></tbody>
+        </table>
+    </div>
+
+    <script src="tickets.js"></script>
+</body>
+</html>
